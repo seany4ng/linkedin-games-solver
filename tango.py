@@ -1,5 +1,6 @@
 from typing import Any
 from enum import Enum
+from dataclasses import dataclass
 
 
 class BoardValueEnum(Enum):
@@ -14,6 +15,22 @@ class RuleEnum(Enum):
     SOLVE_EDGE_FROM_EQ = 2
     SOLVE_EQ_FROM_EDGE = 3
     # TODO: add more rules
+
+
+"""
+The representation of a "=" or "x" in Tango.
+- is_eq: if True, this represents a "=". if False, represents a "x".
+- is_row: if True, it represents (row, col), (row + 1, col);
+    Otherwise, represents (row, col), (row, col + 1).
+- row: the index of the row that the symbol begins at.
+- col: the index of the col that the symbol begins at.
+"""
+@dataclass
+class EqOrDiff:
+    is_eq: bool
+    is_row: bool
+    row: int
+    col: int
 
 
 # A board size of n indicates an n x n tango board.
@@ -45,7 +62,7 @@ class Board:
             for rule in RuleEnum:
                 match rule:
                     case RuleEnum.SOLVE_ROW:
-                        pass
+                        self.solve_row_rule()
                     case RuleEnum.SOLVE_COL:
                         pass
                     case RuleEnum.SOLVE_EDGE_FROM_EQ:
@@ -57,3 +74,13 @@ class Board:
             if prev_board_state == self.board:
                 # TODO: backtrack.
                 pass
+
+
+    def solve_row_rule(self):
+        # TODO: function used for SOLVE_ROW rule. add the rule functions below.
+        # If it gets to convoluted, we can remove this potentially leaky abstraction.
+        pass
+
+
+    def perform_backtrack(self):
+        pass
