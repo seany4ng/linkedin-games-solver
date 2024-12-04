@@ -10,9 +10,10 @@ class BoardValueEnum(Enum):
 
 
 class RuleEnum(Enum):
-    SOLVE_ROW = 0
-    SOLVE_COL = 1
-    SOLVE_EQ_FROM_EDGE = 2
+    SOLVE_EQ_DIFF = 0
+    SOLVE_ROW = 1
+    SOLVE_COL = 2
+    SOLVE_EQ_FROM_EDGE = 3
     # TODO: add more rules
 
 
@@ -60,6 +61,8 @@ class Board:
             prev_board_state = self.board
             for rule in RuleEnum:
                 match rule:
+                    case RuleEnum.SOLVE_EQ_DIFF:
+                        self.solve_eq_diff()
                     case RuleEnum.SOLVE_ROW:
                         self.solve_row_rule()
                     case RuleEnum.SOLVE_COL:
@@ -72,7 +75,37 @@ class Board:
                 # TODO: backtrack.
                 pass
 
+    def get_opposite(value: BoardValueEnum) -> BoardValueEnum:
+        # Helper function for returning opposite value
+        if value == BoardValueEnum.SUN:
+            return BoardValueEnum.MOON
+        elif value == BoardValueEnum.MOON:
+            return BoardValueEnum.SUN
+        return BoardValueEnum.BLANK
+
+    def fill_eq_diff(self, symbol: Any, isEq: bool):
+        # Helper function for filling in opposing side of = or x
+        x1, y1 = symbol.row, symbol.col
+            x2, y2 = x1 + (1 if symbol.is_row else 0), y1 + (0 if symbol.is_row else 1)
+            tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
+
+            if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
+                self.board[x2][y2] = tile1 if isEq else get_opposite(tile1)
+            elif tile2 != BoardValueEnum.BLANK and tile1 == BoardValueEnum.BLANK:
+                self.board[x1][y1] = tile2 if isEq else get_opposite(tile2)
+
+    def solve_eq_diff(self):
+        # RULE = : fill other side of = with matching element
+        for symbol in self.eqs:
+            self.fill_eq_diff(symbol, True)
+
+        # RULE x : fill other side of x with opposite element
+        for symbol in self.diffs:
+            self.fill_eq_diff(symbol, False)
+
+
     def solve_rule(self, board: list[list[BoardValueEnum]]):
+        
         # RULE 1: If 3 moons/suns in a row/col, fill remainder with opposite
         for idx, line in enumerate(board):
             sun_count = line.count(BoardValueEnum.SUN)
