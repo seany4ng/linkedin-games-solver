@@ -75,25 +75,29 @@ class Board:
                 # TODO: backtrack.
                 pass
 
-    def get_opposite_value(value: BoardValueEnum) -> BoardValueEnum:
-        # Helper function for returning opposite value
+
+    def get_opposite_value(self, value: BoardValueEnum) -> BoardValueEnum:
+        """Returns the opposite value of a board value"""
         if value == BoardValueEnum.SUN:
             return BoardValueEnum.MOON
         elif value == BoardValueEnum.MOON:
             return BoardValueEnum.SUN
         return BoardValueEnum.BLANK
-    
+
+
     def fill_eq_diff(self, symbol: Any, isEq: bool):
-        # Helper function for filling in opposing side of = or x
+        """Fills in opposing side of = or x"""
         x1, y1, x2, y2 = symbol.row, symbol.col, symbol.row + (0 if symbol.is_row else 1), symbol.col + (1 if symbol.is_row else 0)
         tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
 
         if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
-            self.board[x2][y2] = tile1 if isEq else get_opposite_value(tile1)
+            self.board[x2][y2] = tile1 if isEq else self.get_opposite_value(tile1)
         elif tile2 != BoardValueEnum.BLANK and tile1 == BoardValueEnum.BLANK:
-            self.board[x1][y1] = tile2 if isEq else get_opposite_value(tile2)
+            self.board[x1][y1] = tile2 if isEq else self.get_opposite_value(tile2)
+
 
     def solve_eq_diff(self):
+        """Solves = or x if one is filled"""
         # RULE = : fill other side of = with matching element
         for symbol in self.eqs:
             self.fill_eq_diff(symbol, True)
@@ -104,7 +108,7 @@ class Board:
 
 
     def solve_rule(self, board: list[list[BoardValueEnum]]):
-        
+        """Attempts to solve a row, for all possible rows"""
         # RULE 1: If 3 moons/suns in a row/col, fill remainder with opposite
         for idx, line in enumerate(board):
             sun_count = line.count(BoardValueEnum.SUN)
@@ -127,16 +131,21 @@ class Board:
                 if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.SUN:
                     board[idx][i] = BoardValueEnum.MOON
 
+
     def solve_row_rule(self):
+        """For each row, try to solve it using Tango's 3-3 rule"""
         self.solve_rule(self.board)
 
+
     def solve_col_rule(self):
+        """For each col, try to solve it using Tango's 3-3 rule"""
         transposed_board = [list(col) for col in zip(*self.board)]
         self.solve_rule(transposed_board)
         self.board = [list(row) for row in zip(*transposed_board)]
 
-    def solve_eq_from_edge(self):
 
+    def solve_eq_from_edge(self):
+        """Given a solved board value on the edge of a =, solve the ="""
         # RULE 3: If empty eq, value must be opposite to edge
         for eq in self.eqs: 
             x1, y1, x2, y2 = x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
@@ -144,15 +153,16 @@ class Board:
                 if eq.is_row:
                     left, right = y1 - 1, y2 + 1
                     if left >= 0:
-                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][left])
+                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][left])
                     elif right < BOARD_SIZE:
-                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][right])
-                if eq.is_col
+                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][right])
+                else:
                     top, bottom = x1 - 1, x2 + 1
                     if top >= 0:
-                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[top][y1])
+                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
                     elif bottom < BOARD_SIZE:
-                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[bottom][y1])
+                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
+
 
     def perform_backtrack(self):
         pass
