@@ -31,8 +31,6 @@ class EqOrDiff:
     is_row: bool
     row: int
     col: int
-    row2: int
-    col2: int
 
 
 # A board size of n indicates an n x n tango board.
@@ -87,7 +85,7 @@ class Board:
     
     def fill_eq_diff(self, symbol: Any, isEq: bool):
         # Helper function for filling in opposing side of = or x
-        x1, y1, x2, y2 = symbol.row, symbol.col, symbol.row2, symbol.col2
+        x1, y1, x2, y2 = symbol.row, symbol.col, symbol.row + (0 if symbol.is_row else 1), symbol.col + (1 if symbol.is_row else 0)
         tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
 
         if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
@@ -138,17 +136,19 @@ class Board:
         self.board = [list(row) for row in zip(*transposed_board)]
 
     def solve_eq_from_edge(self):
+
+        # RULE 3: If empty eq, value must be opposite to edge
         for eq in self.eqs: 
-            x1, y1, x2, y2 = eq.row, eq.col, eq.row2, eq.col2
+            x1, y1, x2, y2 = x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
             if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
                 if eq.is_row:
-                    left, right = y1 - 1, y1 + 2
+                    left, right = y1 - 1, y2 + 1
                     if left >= 0:
                         self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][left])
                     elif right < BOARD_SIZE:
                         self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][right])
-                if eq.is_colL
-                    top, bottom = x1 - 1, x1 + 2
+                if eq.is_col
+                    top, bottom = x1 - 1, x2 + 1
                     if top >= 0:
                         self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[top][y1])
                     elif bottom < BOARD_SIZE:
