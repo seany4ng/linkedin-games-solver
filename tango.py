@@ -31,6 +31,8 @@ class EqOrDiff:
     is_row: bool
     row: int
     col: int
+    row2: int
+    col2: int
 
 
 # A board size of n indicates an n x n tango board.
@@ -75,24 +77,23 @@ class Board:
                 # TODO: backtrack.
                 pass
 
-    def get_opposite(value: BoardValueEnum) -> BoardValueEnum:
+    def get_opposite_value(value: BoardValueEnum) -> BoardValueEnum:
         # Helper function for returning opposite value
         if value == BoardValueEnum.SUN:
             return BoardValueEnum.MOON
         elif value == BoardValueEnum.MOON:
             return BoardValueEnum.SUN
         return BoardValueEnum.BLANK
-
+    
     def fill_eq_diff(self, symbol: Any, isEq: bool):
         # Helper function for filling in opposing side of = or x
-        x1, y1 = symbol.row, symbol.col
-            x2, y2 = x1 + (1 if symbol.is_row else 0), y1 + (0 if symbol.is_row else 1)
-            tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
+        x1, y1, x2, y2 = symbol.row, symbol.col, symbol.row2, symbol.col2
+        tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
 
-            if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
-                self.board[x2][y2] = tile1 if isEq else get_opposite(tile1)
-            elif tile2 != BoardValueEnum.BLANK and tile1 == BoardValueEnum.BLANK:
-                self.board[x1][y1] = tile2 if isEq else get_opposite(tile2)
+        if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
+            self.board[x2][y2] = tile1 if isEq else get_opposite_value(tile1)
+        elif tile2 != BoardValueEnum.BLANK and tile1 == BoardValueEnum.BLANK:
+            self.board[x1][y1] = tile2 if isEq else get_opposite_value(tile2)
 
     def solve_eq_diff(self):
         # RULE = : fill other side of = with matching element
@@ -136,11 +137,22 @@ class Board:
         self.solve_rule(transposed_board)
         self.board = [list(row) for row in zip(*transposed_board)]
 
-
     def solve_eq_from_edge(self):
-
         for eq in self.eqs: 
-
+            x1, y1, x2, y2 = eq.row, eq.col, eq.row2, eq.col2
+            if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
+                if eq.is_row:
+                    left, right = y1 - 1, y1 + 2
+                    if left >= 0:
+                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][left])
+                    elif right < BOARD_SIZE:
+                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[x1][right])
+                if eq.is_colL
+                    top, bottom = x1 - 1, x1 + 2
+                    if top >= 0:
+                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[top][y1])
+                    elif bottom < BOARD_SIZE:
+                        self.board[x1][y1] = self.board[x2][y2] = get_opposite_value(self.board[bottom][y1])
 
     def perform_backtrack(self):
         pass
