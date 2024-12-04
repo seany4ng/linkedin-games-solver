@@ -14,7 +14,19 @@ class RuleEnum(Enum):
     SOLVE_ROW = 1
     SOLVE_COL = 2
     SOLVE_EQ_FROM_EDGE = 3
+    SOLVE_TILE_FROM_SPACE = 4
     # TODO: add more rules
+
+
+# A board size of n indicates an n x n tango board.
+BOARD_SIZE = 6
+
+# A mapping from integer inputs to an enum value.
+INT_TO_VALUE_TYPE = {
+    0: BoardValueEnum.BLANK,
+    1: BoardValueEnum.SUN,
+    2: BoardValueEnum.MOON,
+}
 
 
 """
@@ -33,17 +45,6 @@ class EqOrDiff:
     col: int
 
 
-# A board size of n indicates an n x n tango board.
-BOARD_SIZE = 6
-
-# A mapping from integer inputs to an enum value.
-INT_TO_VALUE_TYPE = {
-    0: BoardValueEnum.BLANK,
-    1: BoardValueEnum.SUN,
-    2: BoardValueEnum.MOON,
-}
-
-
 class Board:
     def __init__(self, board: list[list[int]], diffs: list[Any], eqs: list[Any]):
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
@@ -55,35 +56,35 @@ class Board:
         self.backtrack_stack = [] # Used for backtracking
 
 
+    def iterate_once(self):
+        """Performs one iteration of trying all rules"""
+        # Save the prev board state to compare for back-tracking
+        prev_board_state = self.board
+        for rule in RuleEnum:
+            match rule:
+                case RuleEnum.SOLVE_EQ_DIFF:
+                    self.solve_eq_diff()
+                case RuleEnum.SOLVE_ROW:
+                    self.solve_row_rule()
+                case RuleEnum.SOLVE_COL:
+                    self.solve_col_rule()
+                case RuleEnum.SOLVE_EQ_FROM_EDGE:
+                    self.solve_eq_from_edge()
+                case RuleEnum.SOLVE_TILE_FROM_SPACE:
+                    self.solve_tile_from_space()
+
+        # Compare the old board to the new board. if it's equal, we need to backtrack
+        if prev_board_state == self.board:
+            # TODO: backtrack.
+            pass
+    
+    
     def solve_board(self):
-        while True:
-            # Save the prev board state to compare for back-tracking
-            prev_board_state = self.board
-            for rule in RuleEnum:
-                match rule:
-                    case RuleEnum.SOLVE_EQ_DIFF:
-                        self.solve_eq_diff()
-                    case RuleEnum.SOLVE_ROW:
-                        self.solve_row_rule()
-                    case RuleEnum.SOLVE_COL:
-                        self.solve_col_rule()
-                    case RuleEnum.SOLVE_EQ_FROM_EDGE:
-                        self.solve_eq_from_edge()
-
-            # Compare the old board to the new board. if it's equal, we need to backtrack
-            if prev_board_state == self.board:
-                # TODO: backtrack.
-                pass
+        while not self.is_solved():
+            self.iterate_once()
 
 
-    def get_opposite_value(self, value: BoardValueEnum) -> BoardValueEnum:
-        """Returns the opposite value of a board value"""
-        if value == BoardValueEnum.SUN:
-            return BoardValueEnum.MOON
-        elif value == BoardValueEnum.MOON:
-            return BoardValueEnum.SUN
-        return BoardValueEnum.BLANK
-
+    ### BEGIN: Rules
 
     def fill_eq_diff(self, symbol: Any, isEq: bool):
         """Fills in opposing side of = or x"""
@@ -164,5 +165,34 @@ class Board:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
 
 
+    def solve_tile_from_space(self):
+        """Given a spacing between identical tiles, solves the middle tile"""
+        pass
+
+    ### END: Rules
+
+    ### BEGIN: Helpers
+
+    def get_opposite_value(self, value: BoardValueEnum) -> BoardValueEnum:
+        """Returns the opposite value of a board value"""
+        if value == BoardValueEnum.SUN:
+            return BoardValueEnum.MOON
+        elif value == BoardValueEnum.MOON:
+            return BoardValueEnum.SUN
+        return BoardValueEnum.BLANK
+    
+
+    def is_solved(self) -> bool:
+        """Returns whether the board is fully solved or not"""
+        for row in self.board:
+            for col in row:
+                if col == BoardValueEnum.BLANK:
+                    return False
+                
+        return True
+
+
     def perform_backtrack(self):
         pass
+
+    ### END: Helpers
