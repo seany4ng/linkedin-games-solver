@@ -1,7 +1,7 @@
 from tango import Board, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
 
 
-def test_board_0():
+def test_board_57():
     """
     Tango no. 57.
     Source: https://www.linkedin.com/posts/tango-game_tango-no-57-activity-7269621400477327361-NWjE
@@ -106,14 +106,14 @@ def test_board_0():
     expected_board_0 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_0]
     assert board_class.board == expected_board_0
 
-    print("Test 0 Complete!")
+    print("Test Tango 57 Complete!")
 
     
 
-def test_board_1():
+def test_board_55():
     """
     Tango no. 55.
-    Source: https://www.linkedin.com/posts/tango-game_tango-no-57-activity-7269621400477327361-NWjE
+    Source: https://www.linkedin.com/posts/tango-game_tango-no-55-activity-7268896609373949952-gW07
     """
     # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
     # Arrange
@@ -122,10 +122,6 @@ def test_board_1():
     board[4][5] = 1
     board[5][4] = 1
     board[5][5] = 2
-
-    # TEMPORARY
-    board[0][5] = 1
-    board[5][0] = 1
 
     # All = signs on the board
     eqs = []
@@ -203,7 +199,7 @@ def test_board_1():
     expected_board_1 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_1]
     assert board_class.board == expected_board_1
 
-    print("Test 1 Complete!")
+    print("Test Tango 55 Complete!")
 
-test_board_0()
-test_board_1()
+test_board_57()
+test_board_55()

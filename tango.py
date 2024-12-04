@@ -45,7 +45,7 @@ class EqOrDiff:
 
 
 class Board:
-    def __init__(self, board: list[list[int]], diffs: list[Any], eqs: list[Any]):
+    def __init__(self, board: list[list[int]], diffs: list[EqOrDiff], eqs: list[EqOrDiff]):
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
             raise ValueError("Invalid board inputted")
         
@@ -153,7 +153,6 @@ class Board:
                 line[-1] = BoardValueEnum.MOON
             if line[-1] == line[-2] == BoardValueEnum.SUN:
                 line[0] = BoardValueEnum.MOON
-
         
 
     def solve_row_rule(self):
@@ -198,7 +197,17 @@ class Board:
                 if sun_count == 1 and moon_count == 2:
                     self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.SUN
 
-            # RULE 8: If empty x and 3 values, remaining blank tile must be equal to smaller count
+                # RULE 8: If empty eq on one end and opposite end filled, eq must be different
+                if eq.is_row and y1 == 0 and (grid_val := self.board[x1][-1]) != BoardValueEnum.BLANK:
+                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                if eq.is_row and y2 == BOARD_SIZE - 1 and (grid_val := self.board[x1][0]) != BoardValueEnum.BLANK:
+                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                if not eq.is_row and x1 == 0 and (grid_val := self.board[-1][y1]) != BoardValueEnum.BLANK:
+                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                if not eq.is_row and x2 == BOARD_SIZE - 1 and (grid_val := self.board[0][y1]) != BoardValueEnum.BLANK:
+                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+
+            # RULE 9: If empty x and 3 values, remaining blank tile must be equal to smaller count
             for diff in self.diffs:
                 x1, y1, x2, y2 = diff.row, diff.col, diff.row + (0 if diff.is_row else 1), diff.col + (1 if diff.is_row else 0)
                 if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
