@@ -12,8 +12,7 @@ class BoardValueEnum(Enum):
 class RuleEnum(Enum):
     SOLVE_ROW = 0
     SOLVE_COL = 1
-    SOLVE_EDGE_FROM_EQ = 2
-    SOLVE_EQ_FROM_EDGE = 3
+    SOLVE_EQ_FROM_EDGE = 2
     # TODO: add more rules
 
 
@@ -65,75 +64,50 @@ class Board:
                         self.solve_row_rule()
                     case RuleEnum.SOLVE_COL:
                         self.solve_col_rule()
-                    case RuleEnum.SOLVE_EDGE_FROM_EQ:
-                        pass
                     case RuleEnum.SOLVE_EQ_FROM_EDGE:
-                        pass
+                        self.solve_eq_from_edge()
 
             # Compare the old board to the new board. if it's equal, we need to backtrack
             if prev_board_state == self.board:
                 # TODO: backtrack.
                 pass
 
+    def solve_rule(self, board: list[list[BoardValueEnum]]):
+        # RULE 1: If 3 moons/suns in a row/col, fill remainder with opposite
+        for idx, line in enumerate(board):
+            sun_count = line.count(BoardValueEnum.SUN)
+            moon_count = line.count(BoardValueEnum.MOON)
+            if sun_count == 3:
+                board[idx] = [BoardValueEnum.MOON if x == BoardValueEnum.BLANK else x for x in line]
+            if moon_count == 3:
+                board[idx] = [BoardValueEnum.SUN if x == BoardValueEnum.BLANK else x for x in line]
+
+        # RULE 2: If 2 moons/suns in a row/col, fill edges with opposite
+        for idx, line in enumerate(board):
+            for i in range(len(line) - 2):
+                if line[i] == BoardValueEnum.MOON and line[i+1] == BoardValueEnum.MOON and line[i+2] == BoardValueEnum.BLANK:
+                    board[idx][i+2] = BoardValueEnum.SUN
+                if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.MOON and line[i+2] == BoardValueEnum.MOON:
+                    board[idx][i] = BoardValueEnum.SUN
+
+                if line[i] == BoardValueEnum.SUN and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.BLANK:
+                    board[idx][i+2] = BoardValueEnum.MOON
+                if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.SUN:
+                    board[idx][i] = BoardValueEnum.MOON
 
     def solve_row_rule(self):
-        # TODO: function used for SOLVE_ROW rule. add the rule functions below.
-        # If it gets to convoluted, we can remove this potentially leaky abstraction.
+        self.solve_rule(self.board)
 
-        # RULE 1: if 3 moons/suns in a row, fill remainder with opposite
-        for row_idx, row in enumerate(self.board):
-            sun_count = row.count(BoardValueEnum.SUN)
-            moon_count = row.count(BoardValueEnum.MOON)
-            if sun_count == 3:
-                self.board[row_idx] = [BoardValueEnum.MOON if x == BoardValueEnum.BLANK for x in row]
-            if moon_count == 3:
-                self.board[row_idx] = [BoardValueEnum.SUN if x == BoardValueEnum.BLANK for x in row]
-
-        # RULE 2: if 2 moons/suns in a row, fill edges with opposite
-        for row_idx, row in enumerate(self.board):
-            for i in range(len(row)-2):
-                if row[i] == BoardValueEnum.MOON and row[i+1] == BoardValueEnum.MOON and row[i+2] == BoardValueEnum.BLANK:
-                    self.board[row_idx][i+2] = BoardValueEnum.SUN
-                if row[i] == BoardValueEnum.BLANK and row[i+1] == BoardValueEnum.MOON and row[i+2] == BoardValueEnum.MOON:
-                    self.board[row_idx][i] = BoardValueEnum.SUN
-
-                if row[i] == BoardValueEnum.SUN and row[i+1] == BoardValueEnum.SUN and row[i+2] == BoardValueEnum.BLANK:
-                    self.board[row_idx][i+2] = BoardValueEnum.MOON
-                if row[i] == BoardValueEnum.BLANK and row[i+1] == BoardValueEnum.SUN and row[i+2] == BoardValueEnum.SUN:
-                    self.board[row_idx][i] = BoardValueEnum.MOON
-    
     def solve_col_rule(self):
-
-        # Transpose board to work on columns
-        transposed_board = list(zip(*self.board))
-
-        # RULE 1: if 3 moons/suns in a col, fill remainder with opposite
-        for col_idx, col in enumerate(transposed_board):
-            sun_count = col.count(BoardValueEnum.SUN)
-            moon_count = col.count(BoardValueEnum.MOON)
-            if sun_count == 3:
-                transposed_board[col_idx] = [BoardValueEnum.MOON if x == BoardValueEnum.BLANK else x for x in col]
-            if moon_count == 3:
-                transposed_board[col_idx] = [BoardValueEnum.SUN if x == BoardValueEnum.BLANK else x for x in col]
-
-        # RULE 2: if 2 moons/suns in a row, fill edges with opposite
-        for col_idx, col in enumerate(transposed_board):
-            for i in range(len(col)-2):
-                if col[i] == BoardValueEnum.MOON and col[i+1] == BoardValueEnum.MOON and col[i+2] == BoardValueEnum.BLANK:
-                    col[i+2] = BoardValueEnum.SUN
-                if col[i] == BoardValueEnum.BLANK and col[i+1] == BoardValueEnum.MOON and col[i+2] == BoardValueEnum.MOON:
-                    col[i] = BoardValueEnum.SUN
-
-                if col[i] == BoardValueEnum.SUN and col[i+1] == BoardValueEnum.SUN and col[i+2] == BoardValueEnum.BLANK:
-                    col[i+2] = BoardValueEnum.MOON
-                if col[i] == BoardValueEnum.BLANK and col[i+1] == BoardValueEnum.SUN and col[i+2] == BoardValueEnum.SUN:
-                    col[i] = BoardValueEnum.MOON
-
-        # Transpose back to update the original board
+        transposed_board = [list(col) for col in zip(*self.board)]
+        self.solve_rule(transposed_board)
         self.board = [list(row) for row in zip(*transposed_board)]
 
-    def solve_edge_from_eq(self):
-        
+
+    def solve_eq_from_edge(self):
+
+        for eq in self.eqs: 
+
 
     def perform_backtrack(self):
         pass
