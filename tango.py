@@ -14,7 +14,6 @@ class RuleEnum(Enum):
     SOLVE_ROW = 1
     SOLVE_COL = 2
     SOLVE_EQ_FROM_EDGE = 3
-    SOLVE_TILE_FROM_SPACE = 4
     # TODO: add more rules
 
 
@@ -70,8 +69,6 @@ class Board:
                     self.solve_col_rule()
                 case RuleEnum.SOLVE_EQ_FROM_EDGE:
                     self.solve_eq_from_edge()
-                case RuleEnum.SOLVE_TILE_FROM_SPACE:
-                    self.solve_tile_from_space()
 
         # Compare the old board to the new board. if it's equal, we need to backtrack
         if prev_board_state == self.board:
@@ -132,6 +129,13 @@ class Board:
                 if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.SUN:
                     board[idx][i] = BoardValueEnum.MOON
 
+        # RULE 3: If there is a space between 2 moons/suns, fill with opposite
+        for idx, line in enumerate(board):
+            for i in range(len(line) - 2):
+                if line[i] == BoardValueEnum.MOON and line[i+1] == BoardValueEnum.BLANK and line[i+2] == BoardValueEnum.MOON:
+                    board[idx][i+1] = BoardValueEnum.SUN
+                if line[i] == BoardValueEnum.SUN and line[i+1] == BoardValueEnum.BLANK and line[i+2] == BoardValueEnum.SUN:
+                    board[idx][i+1] = BoardValueEnum.MOON
 
     def solve_row_rule(self):
         """For each row, try to solve it using Tango's 3-3 rule"""
@@ -163,12 +167,6 @@ class Board:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
                     elif bottom < BOARD_SIZE:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
-
-
-    def solve_tile_from_space(self):
-        """Given a spacing between identical tiles, solves the middle tile"""
-        pass
-
     ### END: Rules
 
     ### BEGIN: Helpers
