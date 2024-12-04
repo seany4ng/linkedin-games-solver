@@ -49,7 +49,7 @@ class Board:
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
             raise ValueError("Invalid board inputted")
         
-        self.board = [[INT_TO_VALUE_TYPE[x] for x in board[i]] for i in range(len(board))]
+        self.board = [[INT_TO_VALUE_TYPE[x] for x in row] for row in board]
         self.diffs = diffs # Indicates any x on the board
         self.eqs = eqs # Indicates any = on the board
         self.backtrack_stack = [] # Used for backtracking
