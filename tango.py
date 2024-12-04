@@ -79,6 +79,7 @@ class Board:
     def solve_board(self):
         while not self.is_solved():
             self.iterate_once()
+            # print(self.board)
 
 
     ### BEGIN: Rules
@@ -107,8 +108,9 @@ class Board:
 
     def solve_rule(self, board: list[list[BoardValueEnum]]):
         """Attempts to solve a row, for all possible rows"""
-        # RULE 1: If 3 moons/suns in a row/col, fill remainder with opposite
         for idx, line in enumerate(board):
+
+            # RULE 1: If 3 moons/suns in a row/col, fill remainder with opposite
             sun_count = line.count(BoardValueEnum.SUN)
             moon_count = line.count(BoardValueEnum.MOON)
             if sun_count == 3:
@@ -116,26 +118,43 @@ class Board:
             if moon_count == 3:
                 board[idx] = [BoardValueEnum.SUN if x == BoardValueEnum.BLANK else x for x in line]
 
-        # RULE 2: If 2 moons/suns in a row/col, fill edges with opposite
-        for idx, line in enumerate(board):
             for i in range(len(line) - 2):
-                if line[i] == BoardValueEnum.MOON and line[i+1] == BoardValueEnum.MOON and line[i+2] == BoardValueEnum.BLANK:
+
+                # RULE 2: If 2 moons/suns in a row/col, fill edges with opposite
+                if line[i] == line[i+1] == BoardValueEnum.MOON and line[i+2] == BoardValueEnum.BLANK:
                     board[idx][i+2] = BoardValueEnum.SUN
-                if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.MOON and line[i+2] == BoardValueEnum.MOON:
+                if line[i] == BoardValueEnum.BLANK and line[i+1] == line[i+2] == BoardValueEnum.MOON:
                     board[idx][i] = BoardValueEnum.SUN
 
-                if line[i] == BoardValueEnum.SUN and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.BLANK:
+                if line[i] == line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.BLANK:
                     board[idx][i+2] = BoardValueEnum.MOON
-                if line[i] == BoardValueEnum.BLANK and line[i+1] == BoardValueEnum.SUN and line[i+2] == BoardValueEnum.SUN:
+                if line[i] == BoardValueEnum.BLANK and line[i+1] == line[i+2] == BoardValueEnum.SUN:
                     board[idx][i] = BoardValueEnum.MOON
 
-        # RULE 3: If there is a space between 2 moons/suns, fill with opposite
-        for idx, line in enumerate(board):
-            for i in range(len(line) - 2):
-                if line[i] == BoardValueEnum.MOON and line[i+1] == BoardValueEnum.BLANK and line[i+2] == BoardValueEnum.MOON:
+                # RULE 3: If there is a space between 2 moons/suns, fill with opposite
+                if line[i] == line[i+2] == BoardValueEnum.MOON and line[i+1] == BoardValueEnum.BLANK:
                     board[idx][i+1] = BoardValueEnum.SUN
-                if line[i] == BoardValueEnum.SUN and line[i+1] == BoardValueEnum.BLANK and line[i+2] == BoardValueEnum.SUN:
+                if line[i] == line[i+2] == BoardValueEnum.SUN and line[i+1] == BoardValueEnum.BLANK:
                     board[idx][i+1] = BoardValueEnum.MOON
+
+            
+            # RULE 4: If there are moons/suns at both ends, adjacents must be opposites
+            if line[0] == line[-1] == BoardValueEnum.MOON:
+                line[1] = line[-2] = BoardValueEnum.SUN
+            if line[0] == line[-1] == BoardValueEnum.SUN:
+                line[1] = line[-2] = BoardValueEnum.MOON
+
+            # RULE 5: If there are 2 moons/suns at an end, opposite end must be opposite
+            if line[0] == line[1] == BoardValueEnum.MOON:
+                line[-1] = BoardValueEnum.SUN
+            if line[-1] == line[-2] == BoardValueEnum.MOON:
+                line[0] = BoardValueEnum.SUN
+            if line[0] == line[1] == BoardValueEnum.SUN:
+                line[-1] = BoardValueEnum.MOON
+            if line[-1] == line[-2] == BoardValueEnum.SUN:
+                line[0] = BoardValueEnum.MOON
+
+        
 
     def solve_row_rule(self):
         """For each row, try to solve it using Tango's 3-3 rule"""
@@ -151,10 +170,11 @@ class Board:
 
     def solve_eq_from_edge(self):
         """Given a solved board value on the edge of a =, solve the ="""
-        # RULE 3: If empty eq, value must be opposite to edge
         for eq in self.eqs: 
             x1, y1, x2, y2 = x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
             if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
+
+                # RULE 6: If empty eq, eq values must be opposite to edge
                 if eq.is_row:
                     left, right = y1 - 1, y2 + 1
                     if left >= 0:
@@ -167,6 +187,40 @@ class Board:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
                     elif bottom < BOARD_SIZE:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
+                
+
+                # RULE 7: If empty eq and 3 values, eq values must be equal to smaller count
+                row = self.board[x1] if eq.is_row else [row[y1] for row in self.board]
+                sun_count = row.count(BoardValueEnum.SUN)
+                moon_count = row.count(BoardValueEnum.MOON)
+                if sun_count == 2 and moon_count == 1:
+                    self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.MOON 
+                if sun_count == 1 and moon_count == 2:
+                    self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.SUN
+
+            # RULE 8: If empty x and 3 values, remaining blank tile must be equal to smaller count
+            for diff in self.diffs:
+                x1, y1, x2, y2 = diff.row, diff.col, diff.row + (0 if diff.is_row else 1), diff.col + (1 if diff.is_row else 0)
+                if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
+                    row = self.board[x1] if diff.is_row else [row[y1] for row in self.board]
+                    sun_count = row.count(BoardValueEnum.SUN)
+                    moon_count = row.count(BoardValueEnum.MOON)
+
+                    remaining_blank = next((i for i, value in enumerate(row) if value == BoardValueEnum.BLANK and i not in (y1, y2)), None)
+
+                    if sun_count == 2 and moon_count == 1:
+                        if diff.is_row:
+                            self.board[x1][remaining_blank] = BoardValueEnum.MOON
+                        else:
+                            self.board[remaining_blank][y1] = BoardValueEnum.MOON
+                    elif sun_count == 1 and moon_count == 2:
+                        if diff.is_row:
+                            self.board[x1][remaining_blank] = BoardValueEnum.SUN
+                        else:
+                            self.board[remaining_blank][y1] = BoardValueEnum.SUN
+
+
+
     ### END: Rules
 
     ### BEGIN: Helpers
