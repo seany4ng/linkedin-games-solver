@@ -79,6 +79,7 @@ class Board:
     def solve_board(self):
         while not self.is_solved():
             self.iterate_once()
+            # print(self.board)
 
 
     ### BEGIN: Rules
@@ -189,7 +190,7 @@ class Board:
                 
 
                 # RULE 7: If empty eq and 3 values, eq values must be equal to smaller count
-                row = self.board[x1] if diff.is_row else row[row[y1] for row in self.board]
+                row = self.board[x1] if eq.is_row else [row[y1] for row in self.board]
                 sun_count = row.count(BoardValueEnum.SUN)
                 moon_count = row.count(BoardValueEnum.MOON)
                 if sun_count == 2 and moon_count == 1:
@@ -199,14 +200,13 @@ class Board:
 
             # RULE 8: If empty x and 3 values, remaining blank tile must be equal to smaller count
             for diff in self.diffs:
-                x1, y1, x2, y2 = diff.row, diff.col, (x1 + (0 if diff.is_row else 1), y1 + (1 if diff.is_row else 0))
-
+                x1, y1, x2, y2 = diff.row, diff.col, diff.row + (0 if diff.is_row else 1), diff.col + (1 if diff.is_row else 0)
                 if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
-                    row = self.board[x1] if diff.is_row else row[row[y1] for row in self.board]
+                    row = self.board[x1] if diff.is_row else [row[y1] for row in self.board]
                     sun_count = row.count(BoardValueEnum.SUN)
                     moon_count = row.count(BoardValueEnum.MOON)
 
-                    remaining_blank = next(i for i, value in enumerate(row) if value == BoardValueEnum.BLANK and i not in (y1, y2))
+                    remaining_blank = next((i for i, value in enumerate(row) if value == BoardValueEnum.BLANK and i not in (y1, y2)), None)
 
                     if sun_count == 2 and moon_count == 1:
                         if diff.is_row:

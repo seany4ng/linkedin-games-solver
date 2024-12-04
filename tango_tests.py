@@ -105,3 +105,105 @@ def test_board_0():
     )
     expected_board_0 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_0]
     assert board_class.board == expected_board_0
+
+    print("Test 0 Complete!")
+
+    
+
+def test_board_1():
+    """
+    Tango no. 55.
+    Source: https://www.linkedin.com/posts/tango-game_tango-no-57-activity-7269621400477327361-NWjE
+    """
+    # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
+    # Arrange
+    board = [[0 for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
+    board[0][0] = 2
+    board[4][5] = 1
+    board[5][4] = 1
+    board[5][5] = 2
+
+    # TEMPORARY
+    board[0][5] = 1
+    board[5][0] = 1
+
+    # All = signs on the board
+    eqs = []
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=0,
+            col=4,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=False,
+            row=0,
+            col=5,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=False,
+            row=4,
+            col=0,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=5,
+            col=0,
+        )
+    )
+
+    # All x on the board
+    diffs = []
+    diffs.append(
+        EqOrDiff(
+            is_eq=False,
+            is_row=False,
+            row=0,
+            col=1,
+        )
+    )
+    diffs.append(
+        EqOrDiff(
+            is_eq=False,
+            is_row=True,
+            row=1,
+            col=0,
+        )
+    )
+
+    # Act
+    board_class = Board(
+        board=board,
+        diffs=diffs,
+        eqs=eqs,
+    )
+    board_class.solve_board()
+
+    # Assert
+    solved_board_1 = (
+        [
+            [2, 2, 1, 2, 1, 1],
+            [2, 1, 2, 1, 2, 1],
+            [1, 2, 1, 1, 2, 2],
+            [2, 1, 1, 2, 1, 2],
+            [1, 2, 2, 1, 2, 1],
+            [1, 1, 2, 2, 1, 2],
+        ]
+    )
+    expected_board_1 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_1]
+    assert board_class.board == expected_board_1
+
+    print("Test 1 Complete!")
+
+test_board_0()
+test_board_1()
