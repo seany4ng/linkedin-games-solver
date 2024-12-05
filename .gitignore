@@ -1,3 +1,5 @@
 .code
 __pycache__/
-tango/__pycache__/
+node_modules/
+.DS_Store
+dist/
