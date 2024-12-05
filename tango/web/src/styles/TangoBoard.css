@@ -1,0 +1,78 @@
+.tango-board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* Creates 6 columns */
+    grid-template-rows: repeat(6, 1fr);
+    /* Creates 6 rows */
+    gap: 2px;
+    /* Space between cells */
+    width: auto;
+    /* Auto width for flexible sizing */
+    height: auto;
+    /* Auto height for flexible sizing */
+    max-width: 400px;
+    /* Optional: Maximum width for the board */
+    aspect-ratio: 1 / 1;
+    /* Ensures the board stays square */
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.board-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Prevents content from spilling out */
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    /* Includes padding and borders in the size */
+    background-color: #fff;
+}
+
+.board-cell img {
+    width: 100%;
+    /* Scales the image down by 50% */
+    height: 100%;
+    /* Maintains the aspect ratio */
+    object-fit: contain;
+    /* Ensures the image scales without distortion */
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.control-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    /* Makes the button rounded */
+    font-weight: 600;
+    /* Adds a bold-like effect for LinkedIn-style buttons */
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.control-button:hover {
+    background-color: #e0e0e0;
+    /* Slightly darker background on hover */
+    border-color: #888;
+    /* Changes border color for a subtle effect */
+}
+
+.control-button:active {
+    background-color: #d0d0d0;
+    /* Even darker background when clicked */
+}
