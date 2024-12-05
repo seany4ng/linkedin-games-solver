@@ -1,5 +1,22 @@
-.code
-__pycache__/
+# Dependency directory
 node_modules/
-.DS_Store
+
+# Production build output
 dist/
+__pycache__/
+
+# Local environment files
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
