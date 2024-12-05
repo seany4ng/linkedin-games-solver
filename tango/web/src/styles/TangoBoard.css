@@ -9,10 +9,6 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     /* Creates 6 columns */
-    grid-template-rows: repeat(6, 1fr);
-    /* Creates 6 rows */
-    gap: 2px;
-    /* Space between cells */
     width: auto;
     /* Auto width for flexible sizing */
     height: auto;
@@ -20,9 +16,6 @@
     max-width: 400px;
     /* Optional: Maximum width for the board */
     aspect-ratio: 1 / 1;
-    /* Ensures the board stays square */
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
 }
 
 .board-cell {
@@ -30,11 +23,17 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    height: 60px;
+    width: 60px;
     /* Prevents content from spilling out */
     border: 1px solid #ccc;
     box-sizing: border-box;
     /* Includes padding and borders in the size */
     background-color: #fff;
+}
+
+.board-cell-content {
+    padding: 10px 10px;
 }
 
 .board-cell img {
