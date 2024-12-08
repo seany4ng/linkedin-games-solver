@@ -91,6 +91,15 @@ const TangoBoard: React.FC = () => {
         }
     };
 
+    const handleSolve = () => {
+        console.log("Logging board:");
+        console.log(board);
+        console.log("Logging vertical lines:");
+        console.log(verticalLines);
+        console.log("Logging horizontal lines:");
+        console.log(horizontalLines);
+    }
+
     const getCellIcon = (val: string) => {
         if (val === 'O') return SunIcon;
         if (val === 'X') return MoonIcon;
@@ -194,7 +203,13 @@ const TangoBoard: React.FC = () => {
                 >
                     Undo
                 </button>
-                <button className="control-button">Solve</button>
+                <button
+                    className="control-button"
+                    onClick={handleSolve}
+                    disabled={history.board.length === 0}
+                >
+                    Solve
+                </button>
             </div>
         </div>
     );
