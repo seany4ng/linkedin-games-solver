@@ -8,28 +8,31 @@ import BlankIcon from '../assets/blank.svg';
 import BlankEqualIcon from '../assets/blank-equal.svg';
 import EqualIcon from '../assets/equal.svg';
 import DiffIcon from '../assets/diff.svg';
+import { useTangoSolve } from '../api/tangoSolve';
 
 const BOARD_SIZE = 6;
 
 const TangoBoard: React.FC = () => {
+    // States
     const [board, setBoard] = useState<string[][]>(
         Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(''))
     );
-
     const [verticalLines, setVerticalLines] = useState<string[][]>(
         Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE + 1).fill(''))
     );
-
     const [horizontalLines, setHorizontalLines] = useState<string[][]>(
         Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE).fill(''))
     );
-
     const [history, setHistory] = useState<{
         board: string[][][],
         verticalLines: string[][][][],
         horizontalLines: string[][][][]
     }>({ board: [], verticalLines: [], horizontalLines: [] });
 
+    // API (e.g. /tango/solve)
+    const { solve, data, loading, error } = useTangoSolve();
+
+    // Helpers
     const cycleCell = (r: number, c: number) => {
         setBoard(prev => {
             const copy = prev.map(row => [...row]);
@@ -91,13 +94,15 @@ const TangoBoard: React.FC = () => {
         }
     };
 
-    const handleSolve = () => {
+    const handleSolve = async () => {
         console.log("Logging board:");
         console.log(board);
         console.log("Logging vertical lines:");
         console.log(verticalLines);
         console.log("Logging horizontal lines:");
         console.log(horizontalLines);
+        await solve(board, verticalLines, horizontalLines);
+        console.log("Logging response data:", data);
     }
 
     const getCellIcon = (val: string) => {
