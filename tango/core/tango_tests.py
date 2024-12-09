@@ -8,11 +8,11 @@ def test_board_57():
     """
     # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
     # Arrange
-    board = [[0 for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
-    board[0][0] = 1
-    board[0][1] = 1
-    board[1][0] = 1
-    board[1][1] = 1
+    board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
+    board[0][0] = "O"
+    board[0][1] = "O"
+    board[1][0] = "O"
+    board[1][1] = "O"
 
     # All = signs on the board
     eqs = []
@@ -117,11 +117,11 @@ def test_board_55():
     """
     # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
     # Arrange
-    board = [[0 for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
-    board[0][0] = 2
-    board[4][5] = 1
-    board[5][4] = 1
-    board[5][5] = 2
+    board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
+    board[0][0] = "O"
+    board[4][5] = "O"
+    board[5][4] = "O"
+    board[5][5] = "X"
 
     # All = signs on the board
     eqs = []

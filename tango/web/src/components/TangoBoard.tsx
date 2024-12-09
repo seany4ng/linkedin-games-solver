@@ -37,7 +37,7 @@ const TangoBoard: React.FC = () => {
         setBoard(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? 'O' : current === 'O' ? 'X' : '';
+            copy[r][c] = current === '' ? 'O' : current === 'O' ? 'X' : ' ';
             return copy;
         });
         pushHistory();
@@ -47,7 +47,7 @@ const TangoBoard: React.FC = () => {
         setVerticalLines(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : '';
+            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : ' ';
             return copy;
         });
         pushHistory();
@@ -57,7 +57,7 @@ const TangoBoard: React.FC = () => {
         setHorizontalLines(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : '';
+            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : ' ';
             return copy;
         });
         pushHistory();
