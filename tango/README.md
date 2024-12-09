@@ -14,6 +14,16 @@ Assuming you have everything set up, begin by installing the right packages. Fro
 pip install -r requirements.txt
 ```
 
+We need a `.env` file in `tango/core`. Create one and populate it with the following contents:
+
+```
+# .env
+DEBUG=True
+SECRET_KEY=super-secret-key
+FLASK_RUN_HOST=localhost
+FLASK_RUN_PORT=8000
+```
+
 Everything should be setup now. To expose this server at `http://localhost:8000`, run:
 
 ```bash
