@@ -1,0 +1,23 @@
+# Dependency directory
+node_modules/
+
+# Production build output
+dist/
+__pycache__/
+.pytest_cache/
+
+# Local environment files
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
