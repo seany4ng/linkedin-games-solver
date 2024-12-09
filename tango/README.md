@@ -22,24 +22,13 @@ cd .. && python3 -m core.app.run
 
 Running the app (i.e. the `python3` script) should occur from the `tango` directory rather than `tango/core`, which is why we added a `cd`.
 
-## Backend unit tests
-
-If for whatever reason, you want to run the backend unit tests, you can do so by running each individual file. From the `tango` directory:
-
-```bash
-python3 -m core.tests.test_services
-python3 -m core.tests.test_solver
-```
-
-Setting up pytest probably takes less time than it takes to write this README but sometimes you just don't feel like doing that
-
 ## Tango Frontend
 
 We use a React/Typescript frontend with vite for building the project. Before starting, make sure your npm and node versions are supported. The dependencies will generally require:
 - `node -v` >= 16.18
 - `npm -v` >= 8.3
 
-If these requirements are satisfied, install the required dependencies:
+If you don't have node or npm installed, get them installed with versions satisfying the above constraints. Once done, install the required dependencies:
 
 ```bash
 npm install
@@ -58,3 +47,25 @@ http://localhost:5173
 ```
 
 **Note: this requires starting the backend server first. See `../core` for details.**
+
+### Frontend: Troubleshooting
+
+Either npm sucks or I'm bad at using it, but I routinely face issues with `vite` and `node_modules`. If this is you, I've found that re-installing everything typically works.
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+Once in a while, `vite` will suddenly be not found -- I have no clue why. Whenever this happens, I use the above commands, similar to how back in the day, IT support primarily consisted of turning the machine off and on again.
+
+## Backend unit tests
+
+If for whatever reason, you want to run the backend unit tests, you can do so by running each individual file. From the `tango` directory:
+
+```bash
+python3 -m core.tests.test_services
+python3 -m core.tests.test_solver
+```
+
+Setting up pytest probably takes less time than it takes to write this README but sometimes you just don't feel like doing that.
