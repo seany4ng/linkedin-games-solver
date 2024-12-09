@@ -4,4 +4,5 @@ LinkedinGamesSolver is a collection of bots designed to automate and solve Linke
 
 ## Features
 - A solver for Tango
+- A solver for Queens
 - More details yet to come!

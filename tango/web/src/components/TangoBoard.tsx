@@ -15,13 +15,14 @@ const BOARD_SIZE = 6;
 const TangoBoard: React.FC = () => {
     // States
     const [board, setBoard] = useState<string[][]>(
-        Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(''))
+        Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(' '))
     );
+    // TODO: verify that BOARD_SIZE - 1 is appropriate. i think it is
     const [verticalLines, setVerticalLines] = useState<string[][]>(
-        Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE + 1).fill(''))
+        Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE + 1).fill(' '))
     );
     const [horizontalLines, setHorizontalLines] = useState<string[][]>(
-        Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE).fill(''))
+        Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE).fill(' '))
     );
     const [history, setHistory] = useState<{
         board: string[][][],
@@ -37,7 +38,7 @@ const TangoBoard: React.FC = () => {
         setBoard(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? 'O' : current === 'O' ? 'X' : ' ';
+            copy[r][c] = current === ' ' ? 'O' : current === 'O' ? 'X' : ' ';
             return copy;
         });
         pushHistory();
@@ -47,7 +48,7 @@ const TangoBoard: React.FC = () => {
         setVerticalLines(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : ' ';
+            copy[r][c] = current === ' ' ? '=' : current === '=' ? 'x' : ' ';
             return copy;
         });
         pushHistory();
@@ -57,7 +58,7 @@ const TangoBoard: React.FC = () => {
         setHorizontalLines(prev => {
             const copy = prev.map(row => [...row]);
             const current = copy[r][c];
-            copy[r][c] = current === '' ? '=' : current === '=' ? 'x' : ' ';
+            copy[r][c] = current === ' ' ? '=' : current === '=' ? 'x' : ' ';
             return copy;
         });
         pushHistory();
@@ -95,14 +96,8 @@ const TangoBoard: React.FC = () => {
     };
 
     const handleSolve = async () => {
-        console.log("Logging board:");
-        console.log(board);
-        console.log("Logging vertical lines:");
-        console.log(verticalLines);
-        console.log("Logging horizontal lines:");
-        console.log(horizontalLines);
-        await solve(board, verticalLines, horizontalLines);
-        console.log("Logging response data:", data);
+        const solved_board = await solve(board, verticalLines, horizontalLines);
+        console.log("Solved board:", data);
     }
 
     const getCellIcon = (val: string) => {

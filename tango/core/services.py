@@ -1,4 +1,16 @@
-from tango import Board, EqOrDiff
+from core.tango import Board, BoardValueEnum, EqOrDiff
+
+
+def convert_solved_board_to_string(
+    solved_board: list[list[BoardValueEnum]],
+) -> list[list[str]]:
+    return ([
+        [
+            " " if val == BoardValueEnum.BLANK else (
+                "O" if val == BoardValueEnum.SUN else "X"
+            ) for val in row
+        ] for row in solved_board
+    ])
 
 
 def solve_tango_board(
@@ -58,3 +70,6 @@ def solve_tango_board(
         diffs=diffs,
     )
     tango_board.solve_board()
+    return convert_solved_board_to_string(
+        solved_board=tango_board.board,
+    )

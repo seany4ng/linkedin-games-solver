@@ -56,7 +56,6 @@ class Board:
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
             raise ValueError("Invalid board inputted")
         self.board = [[STR_TO_VALUE_TYPE[x] for x in row] for row in board]
-        breakpoint()
         self.diffs = diffs # Indicates any x on the board
         self.eqs = eqs # Indicates any = on the board
 

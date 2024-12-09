@@ -1,4 +1,4 @@
-from tango import Board, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
+from core.tango import Board, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
 
 
 def test_board_57():
@@ -118,7 +118,7 @@ def test_board_55():
     # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
     # Arrange
     board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
-    board[0][0] = "O"
+    board[0][0] = "X"
     board[4][5] = "O"
     board[5][4] = "O"
     board[5][5] = "X"
@@ -201,5 +201,9 @@ def test_board_55():
 
     print("Test Tango 55 Complete!")
 
+
+# BEGIN: RUN TESTS 
 test_board_57()
 test_board_55()
+
+# END: RUN TESTS
