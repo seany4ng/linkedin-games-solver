@@ -71,11 +71,17 @@ Once in a while, `vite` will suddenly be not found -- I have no clue why. Whenev
 
 ## Backend unit tests
 
-If for whatever reason, you want to run the backend unit tests, you can do so by running each individual file. From the `tango` directory:
+If for whatever reason you want to run unit tests, you can do so by calling `pytest` in the `tango/core` directory. To ensure the pytest is the one installed in the current python environment, we can run it as follows:
 
 ```bash
-python3 -m core.tests.test_services
-python3 -m core.tests.test_solver
+python3 -m pytest # Runs all tests
+python3 -m pytest tests/test_api.py # Runs tests in test_api.py
+python3 -m pytest tests/test_api.py::test_tango_api # Runs a specific test
 ```
 
-Setting up pytest probably takes less time than it takes to write this README but sometimes you just don't feel like doing that.
+If you get any module not found errors, you can typically resolve them by reinstalling the correct dependencies in your existing environment:
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 -m pytest # This should not run into module not found
+```

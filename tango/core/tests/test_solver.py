@@ -105,9 +105,6 @@ def test_board_57():
     )
     expected_board_0 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_0]
     assert board_class.board == expected_board_0
-
-    print("Test Tango 57 Complete!")
-
     
 
 def test_board_55():
@@ -198,12 +195,3 @@ def test_board_55():
     )
     expected_board_1 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_board_1]
     assert board_class.board == expected_board_1
-
-    print("Test Tango 55 Complete!")
-
-
-# BEGIN: RUN TESTS 
-test_board_57()
-test_board_55()
-
-# END: RUN TESTS
