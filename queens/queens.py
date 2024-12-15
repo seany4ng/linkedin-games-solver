@@ -93,50 +93,53 @@ class Board:
             for combo in combinations(s, r):
                 yield combo
 
-    def reduce_sets(self, sets: list[set[int]]):
-        
-        for subset in self.power_set(set([i for i in range(1, self.board_size+1)])):
-            subset_frozen = frozenset(subset)
-            subsets = set()
-            for color in sets:
-                if color.issubset(subset):
-                    subsets.add(frozenset(color))
-            if len(subsets) == len(subset):
-                for i, rowcols in enumerate(sets):
-                    if frozenset(rowcols) not in subsets:
-                        sets[i] = rowcols - subset
-        
     # def reduce_sets(self, sets: list[set[int]]):
-    #     """Reduces the given color to rows/cols mapping if n colors are confined to n rows/columns."""
-    
-    #     # Identify groups of n colors in n rows/columns
-    #     index_to_colors = defaultdict(set) 
-    #     for color, indices in enumerate(sets):
-    #         if indices:
-    #             index_to_colors[frozenset(indices)].add(color)
-
-    #     # Update sets with valid combinations
-    #     for indices, colors in index_to_colors.items():
-    #         if len(indices) == len(colors):  
-    #             for color in colors:
-    #                 sets[color].intersection_update(indices)
-
-    #     # Cross off all tiles that do not follow these rules
-    #     for i in range(self.board_size):
-    #         for j in range(self.board_size):
-    #             if self.solution[i][j] == SolutionEnum.BLANK and i not in sets[self.board[i][j]]:
-    #                 self.solution[i][j] == SolutionEnum.X
         
-    #     # print(sets)
+    #     for subset in self.power_set(set([i for i in range(1, self.board_size+1)])):
+    #         subset_frozen = frozenset(subset)
+    #         subsets = set()
+    #         for color in sets:
+    #             if color.issubset(subset):
+    #                 subsets.add(frozenset(color))
+    #         if len(subsets) == len(subset):
+    #             for i, rowcols in enumerate(sets):
+    #                 if frozenset(rowcols) not in subsets:
+    #                     sets[i] = rowcols - subset
+        
+    def reduce_sets(self, sets: list[set[int]]):
+        """Reduces the given color to rows/cols mapping if n colors are confined to n rows/columns."""
+    
+        # Identify groups of n colors in n rows/columns
+        index_to_colors = defaultdict(set) 
+        for color, indices in enumerate(sets):
+            if indices:
+                index_to_colors[frozenset(indices)].add(color)
+
+        # Update sets with valid combinations
+        for indices, colors in index_to_colors.items():
+            if len(indices) == len(colors):  
+                for color in colors:
+                    sets[color].intersection_update(indices)
+
+        # Cross off all tiles that do not follow these rules
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if self.solution[i][j] == SolutionEnum.BLANK and i not in sets[self.board[i][j]]:
+                    self.solution[i][j] == SolutionEnum.X
+        
+        # print(sets)
 
     def find_invalid_tiles(self):
         """Identify and mark tiles where placing a queen would result in invalidating all position for a specific color elsewhere"""
+
+        remaining_tiles = [self.get_remaining_tiles(color) for color in range(1, self.board_size + 1)]
+
         for x in range(self.board_size):
             for y in range(self.board_size):
                 if self.solution[x][y] == SolutionEnum.BLANK:
                     invalid_tiles = self.simulate_placement(x, y)
                     # print("Invalid tiles for", x, y, ":", invalid_tiles)
-                    if self.check_conflicts(invalid_tiles):
+                    if self.check_conflicts(invalid_tiles, remaining_tiles):
                         self.solution[x][y] = SolutionEnum.X
                         # print("Crossed out", x, y)
 
@@ -198,18 +201,19 @@ class Board:
         invalid_tiles.remove((x, y))
         return invalid_tiles
 
-    def check_conflicts(self, invalid_tiles: set[tuple[int]]) -> bool:
+    def get_remaining_tiles(self, color: int) -> set[tuple[int]]:
+        """Get remaining tiles for a specific color"""
+        return set(
+            (x, y)
+            for x in range(self.board_size) 
+            for y in range(self.board_size) 
+            if self.board[x][y] == color and self.solution[x][y] == SolutionEnum.BLANK
+        )
+    
+    def check_conflicts(self, invalid_tiles: set[tuple[int]], remaining_tiles: list[set[tuple[int]]]) -> bool:
         """Check conflicts for each color"""
-        for color in range(1, self.board_size + 1):  
-            # Get remaining tiles for specific color
-            remaining_tiles = set(
-                (x, y)
-                for x in range(self.board_size) 
-                for y in range(self.board_size) 
-                if self.board[x][y] == color and self.solution[x][y] == SolutionEnum.BLANK
-            )
-            # Check if any of these tiles are invalid
-            if remaining_tiles.issubset(invalid_tiles):
+        for color in remaining_tiles:
+            if color.issubset(invalid_tiles):
                 return True  
         return False 
 
