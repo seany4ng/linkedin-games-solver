@@ -20,7 +20,14 @@ class RuleEnum(Enum):
 # A board size of n indicates an n x n tango board.
 BOARD_SIZE = 6
 
-# A mapping from integer inputs to an enum value.
+# A mapping from str inputs to an enum value.
+STR_TO_VALUE_TYPE = {
+    " ": BoardValueEnum.BLANK,
+    "O": BoardValueEnum.SUN,
+    "X": BoardValueEnum.MOON,
+}
+
+# A mapping from int to enum used in testing.
 INT_TO_VALUE_TYPE = {
     0: BoardValueEnum.BLANK,
     1: BoardValueEnum.SUN,
@@ -45,14 +52,12 @@ class EqOrDiff:
 
 
 class Board:
-    def __init__(self, board: list[list[int]], diffs: list[EqOrDiff], eqs: list[EqOrDiff]):
+    def __init__(self, board: list[list[str]], diffs: list[EqOrDiff], eqs: list[EqOrDiff]):
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
             raise ValueError("Invalid board inputted")
-        
-        self.board = [[INT_TO_VALUE_TYPE[x] for x in row] for row in board]
+        self.board = [[STR_TO_VALUE_TYPE[x] for x in row] for row in board]
         self.diffs = diffs # Indicates any x on the board
         self.eqs = eqs # Indicates any = on the board
-        self.backtrack_stack = [] # Used for backtracking
 
 
     def iterate_once(self):
@@ -251,9 +256,5 @@ class Board:
                     return False
                 
         return True
-
-
-    def perform_backtrack(self):
-        pass
 
     ### END: Helpers

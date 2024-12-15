@@ -4,6 +4,7 @@ node_modules/
 # Production build output
 dist/
 __pycache__/
+.pytest_cache/
 
 # Local environment files
 .env

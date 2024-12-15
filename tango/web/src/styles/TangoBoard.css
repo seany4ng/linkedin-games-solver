@@ -1,50 +1,118 @@
-.tango-board-container {
+.tango-board-with-lines-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
 }
 
-.board {
+/* 11x11 grid for a 6x6 puzzle */
+.puzzle-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    /* Creates 6 columns */
-    width: auto;
-    /* Auto width for flexible sizing */
-    height: auto;
-    /* Auto height for flexible sizing */
-    max-width: 400px;
-    /* Optional: Maximum width for the board */
-    aspect-ratio: 1 / 1;
+    grid-template-rows: repeat(11, 50px);
+    grid-template-columns: repeat(11, 50px);
+    gap: 0;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 25px;
 }
 
-.board-cell {
+/* Base styling */
+.cell,
+.vertical-line,
+.horizontal-line,
+.intersection,
+.filler {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    height: 60px;
-    width: 60px;
-    /* Prevents content from spilling out */
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    /* Includes padding and borders in the size */
     background-color: #fff;
 }
 
-.board-cell-content {
-    padding: 10px 10px;
+/* Cells: clickable, show sun/moon/blank */
+.cell {
+    cursor: pointer;
 }
 
-.board-cell img {
-    width: 100%;
-    /* Scales the image down by 50% */
-    height: 100%;
-    /* Maintains the aspect ratio */
+.cell img {
+    width: 80%;
+    height: 80%;
     object-fit: contain;
-    /* Ensures the image scales without distortion */
 }
 
+/* Vertical line cells */
+.vertical-line {
+    cursor: pointer;
+}
+
+.vertical-line::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: #ccc;
+}
+
+/* Line icons ~50% of cell size */
+.vertical-line img {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Horizontal line cells */
+.horizontal-line {
+    cursor: pointer;
+}
+
+.horizontal-line::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    width: 100%;
+    background: #ccc;
+}
+
+.horizontal-line img {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Intersections: crossing lines */
+.intersection::before {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: #ccc;
+    left: 50%;
+}
+
+.intersection::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: #ccc;
+    top: 50%;
+}
+
+/* Filler cells remain blank to maintain layout */
+.filler {
+    background: #fff;
+}
+
+/* Controls */
 .controls {
     margin-top: 20px;
     display: flex;
@@ -58,20 +126,20 @@
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     border-radius: 20px;
-    /* Makes the button rounded */
     font-weight: 600;
-    /* Adds a bold-like effect for LinkedIn-style buttons */
     transition: background-color 0.2s, border-color 0.2s;
 }
 
 .control-button:hover {
     background-color: #e0e0e0;
-    /* Slightly darker background on hover */
     border-color: #888;
-    /* Changes border color for a subtle effect */
 }
 
 .control-button:active {
     background-color: #d0d0d0;
-    /* Even darker background when clicked */
+}
+
+.control-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
