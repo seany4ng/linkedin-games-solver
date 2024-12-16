@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from core.services import solve_tango_board
+from core.tango.services import solve_tango_board
 from core.app.schemas import TangoSolveRequest
 
 

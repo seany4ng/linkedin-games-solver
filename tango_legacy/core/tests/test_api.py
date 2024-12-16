@@ -1,5 +1,5 @@
 import json
-from core.tango import BOARD_SIZE
+from core.tango.tango_board import BOARD_SIZE
 
 
 def test_tango_api(client):

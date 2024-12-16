@@ -1,12 +1,12 @@
-from core.tango import BOARD_SIZE
-from core.services import solve_tango_board
+import json
+from core.tango.tango_board import BOARD_SIZE
 
 
-def test_solve_tango_board_57():
+def test_tango_api(client):
     """
     Tango no. 57.
     Source: https://www.linkedin.com/posts/tango-game_tango-no-57-activity-7269621400477327361-NWjE
-    This tests if the service function performs the solve
+    This test is intended to ensure the API works as desired by setting up a test client
     """
     # Arrange
     board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
@@ -26,14 +26,24 @@ def test_solve_tango_board_57():
     horizontal_lines[4][4] = "x"
     horizontal_lines[4][5] = "x"
 
+    body = {
+        "board": board,
+        "vertical_lines": vertical_lines,
+        "horizontal_lines": horizontal_lines,
+    }
+
     # Act
-    actual_board = solve_tango_board(
-        board=board,
-        vertical_lines=vertical_lines,
-        horizontal_lines=horizontal_lines,
+    response = client.post(
+        "/tango/solve",
+        data=json.dumps(body),
+        content_type="application/json",
     )
 
     # Assert
+    assert response.status_code == 200
+    solved_board = response.get_json().get("solved_board")
+    assert solved_board
+
     expected_board = (
         [
             ["O", "O", "X", "X", "O", "X"],
@@ -44,4 +54,5 @@ def test_solve_tango_board_57():
             ["X", "X", "O", "O", "X", "O"],
         ]
     )
-    assert expected_board == actual_board
+    assert solved_board == expected_board
+    

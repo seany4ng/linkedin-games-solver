@@ -1,4 +1,4 @@
-from core.tango import TangoBoard, BoardValueEnum, EqOrDiff
+from core.tango.tango_board import TangoBoard, BoardValueEnum, EqOrDiff
 
 
 def convert_solved_board_to_string(
