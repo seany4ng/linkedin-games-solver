@@ -1,4 +1,4 @@
-from core.tango import Board, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
+from core.tango import TangoBoard, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
 
 
 def test_board_57():
@@ -85,7 +85,7 @@ def test_board_57():
     )
 
     # Act
-    board_class = Board(
+    board_class = TangoBoard(
         board=board,
         diffs=diffs,
         eqs=eqs,
@@ -175,7 +175,7 @@ def test_board_55():
     )
 
     # Act
-    board_class = Board(
+    board_class = TangoBoard(
         board=board,
         diffs=diffs,
         eqs=eqs,

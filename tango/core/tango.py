@@ -51,7 +51,7 @@ class EqOrDiff:
     col: int
 
 
-class Board:
+class TangoBoard:
     def __init__(self, board: list[list[str]], diffs: list[EqOrDiff], eqs: list[EqOrDiff]):
         if len(board) != BOARD_SIZE or len(board[0]) != BOARD_SIZE:
             raise ValueError("Invalid board inputted")

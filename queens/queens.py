@@ -23,7 +23,7 @@ VALUE_TYPE_TO_INT = {v: k for k, v in INT_TO_VALUE_TYPE.items()}
 DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 
-class Board:
+class QueensBoard:
     def __init__(self, board_size: int, board: list[list[int]]):
         if len(board) != board_size or len(board[0]) != board_size:
             raise ValueError("Invalid board inputted")
