@@ -1,0 +1,175 @@
+/* Container for the entire queens board app */
+.queens-board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    font-family: sans-serif;
+}
+
+/* Top controls for board size selection */
+.top-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.top-controls label {
+    font-weight: 600;
+}
+
+.top-controls input[type="range"] {
+    -webkit-appearance: none; /* Remove default CSS */
+    width: 150px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.top-controls input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.top-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    background: #888;
+    border-radius: 50%;
+    margin-top: -5px;
+}
+
+.top-controls span {
+    font-weight: 600;
+}
+
+/* Main content area: left column (colors) and right column (board) */
+.main-content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* Left column of color swatches */
+.color-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+.color-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.color-swatch:hover {
+    border-color: #888;
+}
+
+.color-swatch.selected {
+    border-color: #333;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+}
+
+/* Board grid container */
+.board-grid {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.board-row {
+    display: flex;
+}
+
+.board-cell {
+    width: 40px;
+    height: 40px;
+    border: 0.5px solid #000;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.board-cell:hover {
+    border-color: #aaa;
+}
+
+/* When cell is painted, we just show background color */
+/* If needed, additional styling can go here */
+
+/* Bottom controls (e.g., Solve button) */
+.bottom-controls {
+    margin-top: 20px;
+}
+
+.bottom-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin: 0 5px;
+}
+
+.bottom-controls button:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.bottom-controls button:active {
+    background-color: #d0d0d0;
+}
+
+.bottom-controls button:disabled,
+.bottom-controls button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .color-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 220px;
+        justify-content: center;
+    }
+
+    .board-cell {
+        width: 30px;
+        height: 30px;
+    }
+
+    .top-controls input[type="range"] {
+        width: 100px;
+    }
+
+    .bottom-controls button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
