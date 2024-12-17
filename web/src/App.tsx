@@ -21,10 +21,10 @@ const App: React.FC = () => {
               <Link to="/queens" className="nav-link">Queens</Link>
             </li>
             <li>
-              <Link to="/tbd1" className="nav-link">TBD 1</Link>
+              <Link to="/pinpoint" className="nav-link">Pinpoint</Link>
             </li>
             <li>
-              <Link to="/tbd2" className="nav-link">TBD 2</Link>
+              <Link to="/crossclimb" className="nav-link">Crossclimb</Link>
             </li>
           </ul>
         </nav>
@@ -33,9 +33,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/tango" element={<TangoBoard />} />
           <Route path="/queens" element={<QueensBoard />} />
-          <Route path="/tbd1" element={<div className="placeholder-page">TBD Page 1</div>} />
-          <Route path="/tbd2" element={<div className="placeholder-page">TBD Page 2</div>} />
-          <Route path="*" element={<div className="placeholder-page">Select a board from the navbar!</div>} />
+          <Route path="/pinpoint" element={<div className="placeholder-page">TBD</div>} />
+          <Route path="/crossclimb" element={<div className="placeholder-page">TBD</div>} />
+          <Route path="*" element={<div className="placeholder-page">Select a game from the navbar!</div>} />
         </Routes>
       </div>
     </Router>
