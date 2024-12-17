@@ -1,0 +1,74 @@
+.solved-queens-board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 20px;
+}
+
+/* This grid structure and cell sizing mimic the main board */
+.solved-board-grid {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.board-row {
+    display: flex;
+}
+
+.board-cell {
+    width: 40px;
+    height: 40px;
+    border: 0.5px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Specific class for solved board cells if needed for tweaks */
+.solved-board-cell {
+    /* You can add any additional styling or let it be as is to match the main board */
+}
+
+/* Queen icon inside the cell */
+.queen-icon {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+}
+
+/* Controls at the bottom (reusing the same style from QueensBoard) */
+.controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.control-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.control-button:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.control-button:active {
+    background-color: #d0d0d0;
+}
+
+.control-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

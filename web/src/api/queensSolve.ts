@@ -3,12 +3,13 @@ import client from './client'; // Make sure you have a pre-configured Axios clie
 
 // Payload for the queens solve endpoint
 interface QueensSolvePayload {
+    board_size: number;
     board: number[][];
 }
 
 // Response from the queens solve endpoint
 interface QueensSolveResponse {
-    solution: number[][]; // 1 for queen, 0 for empty
+    solved_board: number[][]; // 1 for queen, 0 for empty
 }
 
 export function useQueensSolve() {
@@ -21,7 +22,7 @@ export function useQueensSolve() {
         setError(null);
 
         try {
-            const payload: QueensSolvePayload = { board };
+            const payload: QueensSolvePayload = { board_size: board.length, board };
             // POST request to {baseUrl}/queens/solve
             const response = await client.post<QueensSolveResponse>('/queens/solve', payload);
 

@@ -56,6 +56,7 @@ def post():
 
     # Solve logic
     solved_board: list[list[int]] = solve_queens_board(
+        board_size=payload.board_size,
         board=payload.board,
     )
     return jsonify({

@@ -136,12 +136,17 @@ const QueensBoard: React.FC = () => {
                 </div>
 
                 {/* Show solved board next to original board (mimicking Tango) */}
-                {boardData?.solution && (
+                {/* {boardData?.solution && (
                     <SolvedQueensBoard
                         solution={boardData?.solution}
                         clearBoard={clearSolvedBoard}
                     />
-                )}
+                )} */}
+                <SolvedQueensBoard
+                    solution={boardData?.solved_board}
+                    clearBoard={clearSolvedBoard}
+                    originalBoard={board}
+                />
             </div>
 
             {/* Bottom Controls: Solve Button */}
