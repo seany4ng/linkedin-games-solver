@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import '../styles/QueensBoard.css';
+import { useQueensSolve } from '../api/queensSolve';
+import SolvedQueensBoard from './SolvedQueensBoard';
 
-const MIN_SIZE = 8;
+const MIN_SIZE = 7;
 const MAX_SIZE = 10;
 const DEFAULT_SIZE = 8;
 
 // Example color palette
-const COLORS = ['#FE7A60', '#96BEFF', '#B3DFA0', '#E5F387', '#BBA3E2', '#FFC992', '#B9B29E', '#DFDFDF'];
+const COLORS = ['#FE7A60', '#96BEFF', '#B3DFA0', '#E5F387', '#BBA3E2', '#FFC992', '#B9B29E', '#DFDFDF', '#DD9FBA', '#9FD2D5'];
 
 const QueensBoard: React.FC = () => {
     const [boardSize, setBoardSize] = useState<number>(DEFAULT_SIZE);
@@ -18,6 +20,8 @@ const QueensBoard: React.FC = () => {
 
     // Ref to track when user is clicking/dragging on the board
     const boardRef = useRef<HTMLDivElement | null>(null);
+
+    const { solve, data: boardData, loading, error, setData: setBoardData } = useQueensSolve();
 
     const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newSize = parseInt(e.target.value, 10);
@@ -56,11 +60,28 @@ const QueensBoard: React.FC = () => {
 
     const handleClear = () => {
         setBoard(Array.from({ length: boardSize }, () => Array(boardSize).fill('')));
+        setBoardData(null);
+    };
+
+    const clearSolvedBoard = () => {
+        setBoardData(null);
     }
 
-    const handleSolve = () => {
-        // Placeholder: doesn't do anything yet.
-        console.log("Solve button clicked - will integrate later.");
+    const handleSolve = async () => {
+        // Convert the board of colors to a board of integers
+        // Map each color to an integer index (1-based). Empty cells are 0.
+        const uniqueColors = COLORS.filter(color => board.some(row => row.includes(color)));
+        const colorMap = new Map<string, number>();
+        let colorIndex = 1;
+        for (const color of uniqueColors) {
+            colorMap.set(color, colorIndex++);
+        }
+
+        const boardNumbers = board.map(row =>
+            row.map(cellColor => cellColor ? (colorMap.get(cellColor) || 0) : 0)
+        );
+
+        await solve(boardNumbers);
     };
 
     return (
@@ -113,6 +134,14 @@ const QueensBoard: React.FC = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* Show solved board next to original board (mimicking Tango) */}
+                {boardData?.solution && (
+                    <SolvedQueensBoard
+                        solution={boardData?.solution}
+                        clearBoard={clearSolvedBoard}
+                    />
+                )}
             </div>
 
             {/* Bottom Controls: Solve Button */}

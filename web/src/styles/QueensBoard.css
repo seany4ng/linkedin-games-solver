@@ -54,17 +54,18 @@
     gap: 20px;
 }
 
-/* Left column of color swatches */
+/* Container for color swatches */
 .color-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 40px); /* Two columns of fixed width */
+    gap: 10px; /* Space between swatches */
     padding: 10px;
     background: #f9f9f9;
     border: 2px solid #ccc;
     border-radius: 10px;
 }
+
+/* /*  */
 
 .color-swatch {
     width: 40px;

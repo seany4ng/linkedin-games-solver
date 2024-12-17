@@ -19,4 +19,7 @@ def create_app():
     from .routes import tango_solve
     app.register_blueprint(tango_solve)
 
+    from .routes import queens_solve
+    app.register_blueprint(queens_solve)
+
     return app

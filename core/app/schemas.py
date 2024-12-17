@@ -7,3 +7,8 @@ class TangoSolveRequest:
     board: List[List[str]]
     vertical_lines: List[List[str]]
     horizontal_lines: List[List[str]]
+
+@dataclass
+class QueensSolveRequest:
+    board_size: int
+    board: List[List[int]]
