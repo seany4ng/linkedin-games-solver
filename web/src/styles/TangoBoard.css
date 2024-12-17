@@ -21,8 +21,8 @@
 /* 6x6 grid for the solved board */
 .solved-puzzle-grid {
     display: grid;
-    grid-template-rows: repeat(6, 100px);
-    grid-template-columns: repeat(6, 100px);
+    grid-template-rows: repeat(6, 60px);
+    grid-template-columns: repeat(6, 60px);
     gap: 0;
     background-color: #fff;
     border: 2px solid #ccc;
@@ -32,8 +32,8 @@
 /* 11x11 grid for a 6x6 puzzle */
 .puzzle-grid {
     display: grid;
-    grid-template-rows: repeat(11, 50px);
-    grid-template-columns: repeat(11, 50px);
+    grid-template-rows: repeat(11, 30px);
+    grid-template-columns: repeat(11, 30px);
     gap: 0;
     background-color: #fff;
     border: 2px solid #ccc;
