@@ -9,6 +9,7 @@ import BlankEqualIcon from '../assets/blank-equal.svg';
 import EqualIcon from '../assets/equal.svg';
 import DiffIcon from '../assets/diff.svg';
 import { useTangoSolve } from '../api/tangoSolve';
+import SolvedTangoBoard from './SolvedTangoBoard';
 
 const BOARD_SIZE = 6;
 
@@ -17,7 +18,6 @@ const TangoBoard: React.FC = () => {
     const [board, setBoard] = useState<string[][]>(
         Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(' '))
     );
-    // TODO: verify that BOARD_SIZE - 1 is appropriate. i think it is
     const [verticalLines, setVerticalLines] = useState<string[][]>(
         Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE + 1).fill(' '))
     );
@@ -31,9 +31,28 @@ const TangoBoard: React.FC = () => {
     }>({ board: [], verticalLines: [], horizontalLines: [] });
 
     // API (e.g. /tango/solve)
-    const { solve, data, loading, error } = useTangoSolve();
+    const { solve, data: boardData, loading, error, setData: setBoardData } = useTangoSolve();
 
     // Helpers
+    const clearSolvedBoard = () => {
+        setBoardData(null);
+    }
+    const clearBoard = () => {
+        setBoard(
+            Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(' '))
+        );
+        setVerticalLines(
+            Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE + 1).fill(' '))
+        );
+        setHorizontalLines(
+            Array.from({ length: BOARD_SIZE + 1 }, () => Array(BOARD_SIZE).fill(' '))
+        );
+        setHistory({
+            board: [],
+            verticalLines: [],
+            horizontalLines: [] 
+        });
+    }
     const cycleCell = (r: number, c: number) => {
         setBoard(prev => {
             const copy = prev.map(row => [...row]);
@@ -96,8 +115,7 @@ const TangoBoard: React.FC = () => {
     };
 
     const handleSolve = async () => {
-        const solved_board = await solve(board, verticalLines, horizontalLines);
-        console.log("Solved board:", data);
+        await solve(board, verticalLines, horizontalLines);
     }
 
     const getCellIcon = (val: string) => {
@@ -191,26 +209,39 @@ const TangoBoard: React.FC = () => {
     }
 
     return (
-        <div className="tango-board-with-lines-container">
-            <div className="puzzle-grid">
-                {elements}
+        <div className="tango-app-container">
+            <div className="tango-board-with-lines-container">
+                <div className="puzzle-grid">
+                    {elements}
+                </div>
+                <div className="controls">
+                    <button
+                        className={`control-button ${history.board.length === 0 ? 'disabled' : ''}`}
+                        onClick={handleUndo}
+                        disabled={history.board.length === 0}
+                    >
+                        Undo
+                    </button>
+                    <button
+                        className="control-button"
+                        onClick={handleSolve}
+                        disabled={history.board.length === 0}
+                    >
+                        Solve
+                    </button>
+                    <button
+                        className={`control-button ${history.board.length === 0 ? 'disabled' : ''}`}
+                        onClick={clearBoard}
+                        disabled={history.board.length === 0}
+                    >
+                        Clear
+                    </button>
+                </div>
             </div>
-            <div className="controls">
-                <button
-                    className={`control-button ${history.board.length === 0 ? 'disabled' : ''}`}
-                    onClick={handleUndo}
-                    disabled={history.board.length === 0}
-                >
-                    Undo
-                </button>
-                <button
-                    className="control-button"
-                    onClick={handleSolve}
-                    disabled={history.board.length === 0}
-                >
-                    Solve
-                </button>
-            </div>
+            <SolvedTangoBoard
+                solvedBoard={boardData?.solved_board}
+                clearBoard={clearSolvedBoard}
+            />
         </div>
     );
 };

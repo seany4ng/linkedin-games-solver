@@ -11,7 +11,7 @@ interface TangoSolvePayload {
 // This can be adjusted according to the actual response structure.
 interface TangoSolveResponse {
     // Example: The solved board might come back as a similar 2D array
-    solvedBoard: string[][];
+    solved_board: string[][];
     // Add other response fields as necessary
 }
 
@@ -43,5 +43,5 @@ export function useTangoSolve() {
         }
     }
 
-    return { solve, data, loading, error };
+    return { solve, data, loading, error, setData };
 }
