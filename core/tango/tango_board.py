@@ -175,7 +175,7 @@ class TangoBoard:
     def solve_eq_from_edge(self):
         """Given a solved board value on the edge of a =, solve the ="""
         for eq in self.eqs: 
-            x1, y1, x2, y2 = x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
+            x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
             if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
 
                 # RULE 6: If empty eq, eq values must be opposite to edge
@@ -183,24 +183,29 @@ class TangoBoard:
                     left, right = y1 - 1, y2 + 1
                     if left >= 0:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][left])
+                        continue
                     elif right < BOARD_SIZE:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][right])
+                        continue
                 else:
                     top, bottom = x1 - 1, x2 + 1
                     if top >= 0:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
+                        continue
                     elif bottom < BOARD_SIZE:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
-                
+                        continue
 
                 # RULE 7: If empty eq and 3 values, eq values must be equal to smaller count
                 row = self.board[x1] if eq.is_row else [row[y1] for row in self.board]
                 sun_count = row.count(BoardValueEnum.SUN)
                 moon_count = row.count(BoardValueEnum.MOON)
                 if sun_count == 2 and moon_count == 1:
-                    self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.MOON 
+                    self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.MOON
+                    continue
                 if sun_count == 1 and moon_count == 2:
                     self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.SUN
+                    continue
 
                 # RULE 8: If empty eq on one end and opposite end filled, eq must be different
                 if eq.is_row and y1 == 0 and (grid_val := self.board[x1][-1]) != BoardValueEnum.BLANK:
@@ -256,5 +261,17 @@ class TangoBoard:
                     return False
                 
         return True
+
+
+    def print_board(self) -> list[list[str]]:
+        return (
+            [
+                [
+                    " " if val == BoardValueEnum.BLANK else (
+                        "O" if val == BoardValueEnum.SUN else "X"
+                    ) for val in row
+                ] for row in self.board
+            ]
+        )
 
     ### END: Helpers
