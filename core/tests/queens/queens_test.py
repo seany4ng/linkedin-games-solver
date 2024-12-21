@@ -1,5 +1,6 @@
 from core.queens.queens_board import QueensBoard, INT_TO_VALUE_TYPE, VALUE_TYPE_TO_INT
 
+
 def test_board_110():
     """
     Queens no. 110.
@@ -41,10 +42,8 @@ def test_board_110():
         ]
     )
     expected_soln_110 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_soln_110]
-    print([[VALUE_TYPE_TO_INT[x] for x in row] for row in board_class.solution])
     assert board_class.solution == expected_soln_110
 
-    print("Test Queens 110 Complete!")
 
 def test_board_229():
     """
@@ -87,10 +86,4 @@ def test_board_229():
         ]
     )
     expected_soln_229 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_soln_229]
-    print([[VALUE_TYPE_TO_INT[x] for x in row] for row in board_class.solution])
     assert board_class.solution == expected_soln_229
-
-    print("Test Queens 229 Complete!")
-
-test_board_110()
-test_board_229()

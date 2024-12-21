@@ -3,6 +3,8 @@ from enum import Enum
 from dataclasses import dataclass
 import copy
 
+from core.app.exceptions import TangoBoardInsufficientException, TangoBoardSolvedIncorrectlyException
+
 
 class BoardValueEnum(Enum):
     BLANK = 0
@@ -15,7 +17,6 @@ class RuleEnum(Enum):
     SOLVE_ROW = 1
     SOLVE_COL = 2
     SOLVE_EQ_FROM_EDGE = 3
-    # TODO: add more rules
 
 
 # A board size of n indicates an n x n tango board.
@@ -80,11 +81,10 @@ class TangoBoard:
             prev_board: list[list[Any]] = copy.deepcopy(self.board)
             self.iterate_once()
             if prev_board == self.board:
-                # TODO: proper error handling. we'll make this strenum eventually.
-                return "Provided board state is insufficient"
+                raise TangoBoardInsufficientException()
             
         if not self.is_solved_board_correct():
-            return "Board was solved incorrectly"
+            raise TangoBoardSolvedIncorrectlyException()
 
 
     ### BEGIN: Rules

@@ -1,3 +1,4 @@
+from core.app.exceptions import APIException, TangoBoardInsufficientException, TangoBoardSolvedIncorrectlyException
 from core.tango.tango_board import TangoBoard, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
 
 
@@ -367,11 +368,99 @@ def test_unsolvable_board():
         diffs=diffs,
         eqs=eqs,
     )
-    solve_board_response = board_class.solve_board()
-    
+
     # Assert
-    # TODO: update this once we have proper error handling
-    assert solve_board_response == "Provided board state is insufficient"
+    try:
+        board_class.solve_board()
+
+    except APIException as ae:
+        assert isinstance(ae, TangoBoardInsufficientException)
+
+
+def test_incorrect_board():
+    """
+    Given an overspecified (but incorrect) board, ensure the error gets returned properly.
+    In this case, we are using Tango board 73 but adding some 3 moon in a rows
+    """
+    # Recall: 0 -> Blank; 1 -> Sun; 2 -> Moon.
+    # Arrange
+    board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
+    board[0][0] = "X"
+    board[1][0] = "O"
+    board[2][3] = "O"
+    board[2][4] = "X"
+    board[4][1] = "O"
+    board[5][1] = "X"
+    board[5][2] = "X"
+    board[5][3] = "X"
+
+    # All = signs on the board
+    eqs = []
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=0,
+            col=1,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=1,
+            col=1,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=3,
+            col=3,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=False,
+            row=4,
+            col=2,
+        )
+    )
+
+    # All x on the board
+    diffs = []
+    diffs.append(
+        EqOrDiff(
+            is_eq=False,
+            is_row=False,
+            row=4,
+            col=0,
+        )
+    )
+    diffs.append(
+        EqOrDiff(
+            is_eq=False,
+            is_row=False,
+            row=2,
+            col=5,
+        )
+    )
+    
+    # Act
+    board_class = TangoBoard(
+        board=board,
+        diffs=diffs,
+        eqs=eqs,
+    )
+
+    # Assert
+    try:
+        board_class.solve_board()
+
+    except APIException as ae:
+        assert isinstance(ae, TangoBoardSolvedIncorrectlyException)
 
 
 def test_is_solved_board_correct():
