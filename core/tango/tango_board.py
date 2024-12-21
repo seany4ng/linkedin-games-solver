@@ -1,6 +1,7 @@
 from typing import Any
 from enum import Enum
 from dataclasses import dataclass
+import copy
 
 
 class BoardValueEnum(Enum):
@@ -76,7 +77,7 @@ class TangoBoard:
     
     def solve_board(self):
         while not self.is_solved():
-            prev_board: list[list[Any]] = self.board
+            prev_board: list[list[Any]] = copy.deepcopy(self.board)
             self.iterate_once()
             if prev_board == self.board:
                 # TODO: proper error handling. we'll make this strenum eventually.
@@ -306,7 +307,7 @@ class TangoBoard:
 
     def print_board(self) -> list[list[str]]:
         """String representation of the board state -- used for debugging"""
-        return (
+        print(
             [
                 [
                     " " if val == BoardValueEnum.BLANK else (
