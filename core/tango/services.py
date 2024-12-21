@@ -69,7 +69,11 @@ def solve_tango_board(
         eqs=eqs,
         diffs=diffs,
     )
-    tango_board.solve_board()
-    return convert_solved_board_to_string(
-        solved_board=tango_board.board,
-    )
+    response = tango_board.solve_board()
+    if response is None:
+        return convert_solved_board_to_string(
+            solved_board=tango_board.board,
+        )
+    
+    # TODO: figure out a way to propagate the error string from solve_board()
+    return [[]]

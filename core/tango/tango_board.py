@@ -62,8 +62,6 @@ class TangoBoard:
 
     def iterate_once(self):
         """Performs one iteration of trying all rules"""
-        # Save the prev board state to compare for back-tracking
-        prev_board_state = self.board
         for rule in RuleEnum:
             match rule:
                 case RuleEnum.SOLVE_EQ_DIFF:
@@ -74,17 +72,18 @@ class TangoBoard:
                     self.solve_col_rule()
                 case RuleEnum.SOLVE_EQ_FROM_EDGE:
                     self.solve_eq_from_edge()
-
-        # Compare the old board to the new board. if it's equal, we need to backtrack
-        if prev_board_state == self.board:
-            # TODO: backtrack.
-            pass
     
     
     def solve_board(self):
         while not self.is_solved():
+            prev_board: list[list[Any]] = self.board
             self.iterate_once()
-            # print(self.board)
+            if prev_board == self.board:
+                # TODO: proper error handling. we'll make this strenum eventually.
+                return "Provided board state is insufficient"
+            
+        if not self.is_solved_board_correct():
+            return "Board was solved incorrectly"
 
 
     ### BEGIN: Rules
@@ -181,18 +180,18 @@ class TangoBoard:
                 # RULE 6: If empty eq, eq values must be opposite to edge
                 if eq.is_row:
                     left, right = y1 - 1, y2 + 1
-                    if left >= 0:
+                    if left >= 0 and self.board[x1][left] != BoardValueEnum.BLANK:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][left])
                         continue
-                    elif right < BOARD_SIZE:
+                    elif right < BOARD_SIZE and self.board[x1][right] != BoardValueEnum.BLANK:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][right])
                         continue
                 else:
                     top, bottom = x1 - 1, x2 + 1
-                    if top >= 0:
+                    if top >= 0 and self.board[top][y1] != BoardValueEnum.BLANK:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
                         continue
-                    elif bottom < BOARD_SIZE:
+                    elif bottom < BOARD_SIZE and self.board[bottom][y1] != BoardValueEnum.BLANK:
                         self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
                         continue
 
@@ -253,6 +252,12 @@ class TangoBoard:
         return BoardValueEnum.BLANK
     
 
+    def is_solved_board_correct(self) -> bool:
+        """Returns whether a solved board state is fully correct"""
+        # TODO: fill this in
+        return True
+    
+    
     def is_solved(self) -> bool:
         """Returns whether the board is fully solved or not"""
         for row in self.board:
@@ -264,6 +269,7 @@ class TangoBoard:
 
 
     def print_board(self) -> list[list[str]]:
+        """String representation of the board state -- used for debugging"""
         return (
             [
                 [
