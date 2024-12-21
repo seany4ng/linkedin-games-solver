@@ -251,10 +251,46 @@ class TangoBoard:
             return BoardValueEnum.SUN
         return BoardValueEnum.BLANK
     
+    def is_line_correct(self, line: list[BoardValueEnum]) -> bool:
+        """Returns whether a line is correct"""
+        sun_count = line.count(BoardValueEnum.SUN)
+        moon_count = line.count(BoardValueEnum.MOON)
+        if sun_count != 3 or moon_count != 3:
+            return False
+
+        sun_count, moon_count = 0, 0
+        for val in line:
+            if val == BoardValueEnum.SUN:
+                sun_count += 1
+                moon_count = 0
+            else:
+                moon_count += 1
+                sun_count = 0
+            if sun_count == 3 or moon_count == 3:
+                return False
+        
+        return True
 
     def is_solved_board_correct(self) -> bool:
         """Returns whether a solved board state is fully correct"""
-        # TODO: fill this in
+
+        for eq in self.eqs:
+            x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
+            if self.board[x1][y1] != self.board[x2][y2]:
+                return False
+        for diff in self.diffs:
+            x1, y1, x2, y2 = diff.row, diff.col, diff.row + (0 if diff.is_row else 1), diff.col + (1 if diff.is_row else 0)
+            if self.board[x1][y1] == self.board[x2][y2]:
+                return False
+
+        for row in self.board:
+            if not self.is_line_correct(row):
+                return False
+
+        for col in zip(*self.board):
+            if not self.is_line_correct(col):
+                return False
+        
         return True
     
     
