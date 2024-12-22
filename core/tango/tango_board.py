@@ -29,6 +29,9 @@ STR_TO_VALUE_TYPE = {
     "X": BoardValueEnum.MOON,
 }
 
+# A mapping from enum value to str.
+VALUE_TO_STR_TYPE = {v: k for k, v in STR_TO_VALUE_TYPE.items()}
+
 # A mapping from int to enum used in testing.
 INT_TO_VALUE_TYPE = {
     0: BoardValueEnum.BLANK,
@@ -95,9 +98,9 @@ class TangoBoard:
         tile1, tile2 = self.board[x1][y1], self.board[x2][y2]
 
         if tile1 != BoardValueEnum.BLANK and tile2 == BoardValueEnum.BLANK:
-            self.board[x2][y2] = tile1 if isEq else self.get_opposite_value(tile1)
+            self.board[x2][y2] = tile1 if isEq else TangoBoard.get_opposite_value(tile1)
         elif tile2 != BoardValueEnum.BLANK and tile1 == BoardValueEnum.BLANK:
-            self.board[x1][y1] = tile2 if isEq else self.get_opposite_value(tile2)
+            self.board[x1][y1] = tile2 if isEq else TangoBoard.get_opposite_value(tile2)
 
 
     def solve_eq_diff(self):
@@ -182,18 +185,18 @@ class TangoBoard:
                 if eq.is_row:
                     left, right = y1 - 1, y2 + 1
                     if left >= 0 and self.board[x1][left] != BoardValueEnum.BLANK:
-                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][left])
+                        self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(self.board[x1][left])
                         continue
                     elif right < BOARD_SIZE and self.board[x1][right] != BoardValueEnum.BLANK:
-                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[x1][right])
+                        self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(self.board[x1][right])
                         continue
                 else:
                     top, bottom = x1 - 1, x2 + 1
                     if top >= 0 and self.board[top][y1] != BoardValueEnum.BLANK:
-                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[top][y1])
+                        self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(self.board[top][y1])
                         continue
                     elif bottom < BOARD_SIZE and self.board[bottom][y1] != BoardValueEnum.BLANK:
-                        self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(self.board[bottom][y1])
+                        self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(self.board[bottom][y1])
                         continue
 
                 # RULE 7: If empty eq and 3 values, eq values must be equal to smaller count
@@ -209,13 +212,13 @@ class TangoBoard:
 
                 # RULE 8: If empty eq on one end and opposite end filled, eq must be different
                 if eq.is_row and y1 == 0 and (grid_val := self.board[x1][-1]) != BoardValueEnum.BLANK:
-                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                    self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
                 if eq.is_row and y2 == BOARD_SIZE - 1 and (grid_val := self.board[x1][0]) != BoardValueEnum.BLANK:
-                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                    self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
                 if not eq.is_row and x1 == 0 and (grid_val := self.board[-1][y1]) != BoardValueEnum.BLANK:
-                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                    self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
                 if not eq.is_row and x2 == BOARD_SIZE - 1 and (grid_val := self.board[0][y1]) != BoardValueEnum.BLANK:
-                    self.board[x1][y1] = self.board[x2][y2] = self.get_opposite_value(grid_val)
+                    self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
 
             # RULE 9: If empty x and 3 values, remaining blank tile must be equal to smaller count
             for diff in self.diffs:
@@ -244,7 +247,7 @@ class TangoBoard:
 
     ### BEGIN: Helpers
 
-    def get_opposite_value(self, value: BoardValueEnum) -> BoardValueEnum:
+    def get_opposite_value(value: BoardValueEnum) -> BoardValueEnum:
         """Returns the opposite value of a board value"""
         if value == BoardValueEnum.SUN:
             return BoardValueEnum.MOON
@@ -252,7 +255,7 @@ class TangoBoard:
             return BoardValueEnum.SUN
         return BoardValueEnum.BLANK
     
-    def is_line_correct(self, line: list[BoardValueEnum]) -> bool:
+    def is_line_correct(line: list[BoardValueEnum]) -> bool:
         """Returns whether a line is correct"""
         sun_count = line.count(BoardValueEnum.SUN)
         moon_count = line.count(BoardValueEnum.MOON)
@@ -285,11 +288,11 @@ class TangoBoard:
                 return False
 
         for row in self.board:
-            if not self.is_line_correct(row):
+            if not TangoBoard.is_line_correct(row):
                 return False
 
         for col in zip(*self.board):
-            if not self.is_line_correct(col):
+            if not TangoBoard.is_line_correct(col):
                 return False
         
         return True
@@ -307,14 +310,7 @@ class TangoBoard:
 
     def print_board(self) -> list[list[str]]:
         """String representation of the board state -- used for debugging"""
-        print(
-            [
-                [
-                    " " if val == BoardValueEnum.BLANK else (
-                        "O" if val == BoardValueEnum.SUN else "X"
-                    ) for val in row
-                ] for row in self.board
-            ]
-        )
+        for row in self.board:
+            print([VALUE_TO_STR_TYPE[x] for x in row])
 
     ### END: Helpers
