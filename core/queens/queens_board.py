@@ -1,5 +1,10 @@
 from enum import Enum
 from itertools import combinations
+from typing import Any
+
+import copy
+
+from core.app.exceptions import QueensBoardInsufficientException, QueensBoardSolvedIncorrectlyException
 
 
 class SolutionEnum(Enum):
@@ -52,7 +57,13 @@ class QueensBoard:
         """Solves the Queens board"""
         self.update_sets()
         while not self.is_solved():
+            prev_board: list[list[Any]] = copy.deepcopy(self.solution)
             self.iterate_once()
+            if prev_board == self.solution:
+                raise QueensBoardInsufficientException()
+            
+        if not self.solved_board_is_correct():
+            raise QueensBoardSolvedIncorrectlyException()
             
 
     ### BEGIN: Rules
@@ -166,7 +177,7 @@ class QueensBoard:
                     self.color_to_rows[self.board[i][j]].add(i)
                     self.color_to_cols[self.board[i][j]].add(j)
 
-    def simulate_placement(self, x: int, y: int) -> set[tuple[int]]:
+    def simulate_placement(self, x: int, y: int) -> set[tuple[int, int]]:
         """Simulate placing a queen at (x, y) and calculate resulting invalid tiles"""
 
         invalid_tiles = set()
@@ -186,7 +197,7 @@ class QueensBoard:
         return invalid_tiles
 
 
-    def get_remaining_tiles(self, color: int) -> set[tuple[int]]:
+    def get_remaining_tiles(self, color: int) -> set[tuple[int, int]]:
         """Get remaining tiles for a specific color"""
         return set(
             (x, y)
@@ -196,7 +207,7 @@ class QueensBoard:
         )
 
 
-    def check_conflicts(self, invalid_tiles: set[tuple[int]], remaining_tiles: list[set[tuple[int]]]) -> bool:
+    def check_conflicts(self, invalid_tiles: set[tuple[int, int]], remaining_tiles: list[set[tuple[int, int]]]) -> bool:
         """
         Determines if placing a queen will eliminate all blanks for either
         a color, a row, or a column. return True if it would, and False otherwise.
@@ -239,6 +250,27 @@ class QueensBoard:
             for col in row:
                 if col == SolutionEnum.BLANK:
                     return False
+        return True
+
+    def solved_board_is_correct(self) -> bool:
+        """Returns whether `self.solution` follows the rules"""
+        row_occurences, col_occurences = set(), set()
+        for r in range(len(self.solution)):
+            for c in range(len(self.solution[r])):
+                if self.solution[r][c] == SolutionEnum.QUEEN:
+                    row_occurences.add(r)
+                    col_occurences.add(c)
+
+                    conflicts: set[tuple[int, int]] = self.simulate_placement(r, c)
+                    for x, y in conflicts:
+                        if self.solution[x][y] == SolutionEnum.QUEEN:
+                            return False
+
+        # If there are columns or rows with missing queens, consider this board
+        # underspecified.
+        if not row_occurences == col_occurences == set(range(len(self.board))):
+            raise QueensBoardInsufficientException()
+        
         return True
 
     ### END: Helpers

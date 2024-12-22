@@ -1,3 +1,4 @@
+from core.app.exceptions import APIException, QueensBoardInsufficientException
 from core.queens.queens_board import QueensBoard, INT_TO_VALUE_TYPE, VALUE_TYPE_TO_INT
 
 
@@ -87,3 +88,55 @@ def test_board_229():
     )
     expected_soln_229 = [[INT_TO_VALUE_TYPE[x] for x in row] for row in solved_soln_229]
     assert board_class.solution == expected_soln_229
+
+
+def test_unsolvable_board():
+    """
+    Ensures that a board with no solution doesn't infinite while loop.
+    Use an underspecified 3x3 board.
+    """
+    # Arrange
+    board = [
+        [1, 1, 1],
+        [2, 2, 2],
+        [3, 3, 3],
+    ]
+
+    # Act
+    board_class = QueensBoard(
+        board_size=len(board),
+        board=board,
+    )
+    try:
+        board_class.solve_board()
+
+    # Assert
+    except APIException as ae:
+        assert isinstance(ae, QueensBoardInsufficientException)
+
+
+def test_incorrect_board():
+    """
+    Ensures that a board with a specifically invalid solution fails.
+    Use a 3x3 board with conflicting rows.
+    """
+    # Arrange
+    board = [
+        [1, 2, 2, 2, 3],
+        [2, 2, 2, 2, 2],
+        [4, 4, 5, 5, 5],
+        [4, 4, 4, 5, 5],
+        [4, 4, 4, 4, 4],
+    ]
+
+    # Act
+    board_class = QueensBoard(
+        board_size=len(board),
+        board=board,
+    )
+    try:
+        board_class.solve_board()
+
+    # Assert
+    except APIException as ae:
+        assert isinstance(ae, QueensBoardInsufficientException)

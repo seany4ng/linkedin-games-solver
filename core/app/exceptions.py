@@ -21,3 +21,19 @@ class TangoBoardSolvedIncorrectlyException(APIException):
             message="Tango board was solved incorrectly",
             status_code=400,
         )
+
+
+class QueensBoardInsufficientException(APIException):
+    def __init__(self):
+        super().__init__(
+            message="Provided Queens board state is insufficient",
+            status_code=400,
+        )
+
+
+class QueensBoardSolvedIncorrectlyException(APIException):
+    def __init__(self):
+        super().__init__(
+            message="Queens board was solved incorrectly",
+            status_code=400,
+        )
