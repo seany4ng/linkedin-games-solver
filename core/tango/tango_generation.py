@@ -1,8 +1,8 @@
 from typing import Any
-from core.tango.tango_board import BoardValueEnum, BOARD_SIZE, TangoBoard, VALUE_TO_STR_TYPE
+from core.tango.tango_board import BoardValueEnum, BOARD_SIZE, EqOrDiff, TangoBoard, VALUE_TO_STR_TYPE
 
 
-import random
+import copy, random
 
 
 def is_valid_board(board: list[list[str]]) -> bool:
@@ -95,16 +95,63 @@ def try_generate_random_tango_board() -> list[list[BoardValueEnum]] | None:
     return board
 
 
-def generate_random_tango_board() -> list[list[str]]:
+def generate_random_tango_board(
+    num_eqs_or_diff: int,
+) -> tuple[list[list[str]], list[list[str]], list[list[str]]]:
     """
-    Tries generating a Tango board until a valid one is generated.
-    Due to randomness, this may require calling our generation function multiple times.
-    Using basic counting, we can show that the probability that an invalid board is generated
-    is 0.3, or 6/20. The computation is left as an exercise to the user.
+    Generates a random, unsolved tango Board.
     """
     generated_board = try_generate_random_tango_board()
     while generated_board is None or not is_valid_board(generated_board):
         generated_board = try_generate_random_tango_board()
 
-    # Returns a 2d list of strings
-    return [[VALUE_TO_STR_TYPE[x] for x in row] for row in generated_board]
+    # Given the generated board, let's generate a solution.
+    # Step 1: Randomly pick a bunch of eq and diff.
+    eq: list[Any] = []
+    diff: list[Any] = []
+    for i in range(num_eqs_or_diff):
+        is_row = random.random() > 0.5
+        ind = random.randint(0, 29)
+        bigger = ind % 6
+        smaller = ind // 6
+        if is_row:
+            row, col = bigger, smaller
+            next_row, next_col = row, col + 1
+
+        else:
+            row, col = smaller, bigger
+            next_row, next_col = row + 1, col
+
+        if generated_board[row][col] == generated_board[next_row][next_col]:
+            eq.append(
+                EqOrDiff(
+                    is_eq=True,
+                    is_row=is_row,
+                    row=row,
+                    col=col,
+                )
+            )
+
+        else:
+            diff.append(
+                EqOrDiff(
+                    is_eq=False,
+                    is_row=is_row,
+                    row=row,
+                    col=col,
+                )
+            )
+            
+    # Next, let's create a set of the remaining non-blank elements.
+    filled_squares = set()
+    for i in range(BOARD_SIZE):
+        for j in range(BOARD_SIZE):
+            if generated_board[i][j] != BoardValueEnum.BLANK:
+                filled_squares.add((i, j))
+
+    prev_solution = copy.deepcopy(generated_board)
+    while True:
+        new_solution = copy.deepcopy(prev_solution)
+        x, y = random.sample(new_solution)[0]
+        filled_squares.remove((x, y))
+        new_solution[x][y] = BoardValueEnum.BLANK
