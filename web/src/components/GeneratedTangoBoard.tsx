@@ -68,8 +68,8 @@ const GeneratedTangoBoard: React.FC = () => {
             // we’ll assume they are 2D arrays of “=”, “x”, or “ ”, sized
             // properly for vertical/horizontal lines.  If your server returns
             // something else, adjust accordingly:
-            setVerticalLines(clone2DArray(data.col_lines));
-            setHorizontalLines(clone2DArray(data.row_lines));
+            setVerticalLines(clone2DArray(data.row_lines));
+            setHorizontalLines(clone2DArray(data.col_lines));
 
             // The solution might also come back in data.solution
             if (data.solution) {
@@ -164,8 +164,8 @@ const GeneratedTangoBoard: React.FC = () => {
         // i.e., the puzzle state from `data.board` / data.eqs / data.diffs
         if (data) {
             setBoard(clone2DArray(data.board));
-            setVerticalLines(clone2DArray(data.col_lines));
-            setHorizontalLines(clone2DArray(data.row_lines));
+            setVerticalLines(clone2DArray(data.row_lines));
+            setHorizontalLines(clone2DArray(data.col_lines));
             setHistory({
                 board: [],
                 verticalLines: [],
