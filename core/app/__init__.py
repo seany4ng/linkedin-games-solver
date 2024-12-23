@@ -17,9 +17,9 @@ def create_app():
     app.config['PORT'] = os.getenv('FLASK_RUN_PORT', '8000')
 
     from .routes import tango_solve
-    app.register_blueprint(tango_solve)
+    app.register_blueprint(tango_solve, url_prefix="/tango")
 
     from .routes import queens_solve
-    app.register_blueprint(queens_solve)
+    app.register_blueprint(queens_solve, url_prefix="/queens")
 
     return app

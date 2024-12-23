@@ -1,8 +1,8 @@
 import json
-from core.tango.tango_board import BOARD_SIZE
+from core.tango.tango_board import BOARD_SIZE, TangoBoard
 
 
-def test_tango_api(client):
+def test_tango_solve_api(client):
     """
     Tango no. 57.
     Source: https://www.linkedin.com/posts/tango-game_tango-no-57-activity-7269621400477327361-NWjE
@@ -56,3 +56,13 @@ def test_tango_api(client):
     )
     assert solved_board == expected_board
     
+
+def test_tango_generate_api(client):
+    # Arrange, Act
+    response = client.get(
+        "/tango/generate",
+        content_type="application/json",
+    )
+
+    # Assert
+    assert response.status_code == 200

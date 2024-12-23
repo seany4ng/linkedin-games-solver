@@ -1,16 +1,19 @@
+from dataclasses import asdict
 from flask import Blueprint, jsonify, request
 from core.tango.services import solve_tango_board
-from core.app.schemas import TangoSolveRequest
+from core.app.schemas import TangoGenerationResponse, TangoSolveRequest
 from core.queens.services import solve_queens_board
 from core.app.schemas import QueensSolveRequest
+from core.tango.tango_board import VALUE_TO_STR_TYPE
+from core.tango.tango_generation import generate_random_tango_board
 
-tango_solve = Blueprint('tango/solve', __name__)
-queens_solve = Blueprint('queens/solve', __name__)
+tango_solve = Blueprint('tango', __name__)
+queens_solve = Blueprint('queens', __name__)
 
 
 # BEGIN: Tango routes
 
-@tango_solve.route('/tango/solve', methods=['POST'])
+@tango_solve.route('/solve', methods=['POST'])
 def post():
     """
     Expect: TangoSolveRequest
@@ -42,15 +45,29 @@ def post():
 @tango_solve.route('/generate', methods=["GET"])
 def get():
     """
-    Expect: TangoGenerateRequest
+    Expect: numEqDiff
     Response: TangoGenerateResponse
     """
-    return jsonify({"TODO": "finish this"}), 200
+    num_eq_diff = request.args.get("numEqDiff", default=8, type=int)
+    (
+        generated_board,
+        diffs,
+        eqs,
+        solution,
+    ) = generate_random_tango_board(num_eqs_or_diff=num_eq_diff)
+    solution_str = [[VALUE_TO_STR_TYPE[x] for x in row] for row in solution]
+    response = TangoGenerationResponse(
+        board=generated_board,
+        diffs=diffs,
+        eqs=eqs,
+        solution=solution_str,
+    )
+    return jsonify(asdict(response)), 200
 
 
 # BEGIN: Queens routes
 
-@queens_solve.route('/queens/solve', methods=['POST'])
+@queens_solve.route('/solve', methods=['POST'])
 def post():
     """
     Expect: QueensSolveRequest
