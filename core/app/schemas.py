@@ -17,6 +17,6 @@ class QueensSolveRequest:
 @dataclass
 class TangoGenerationResponse:
     board: list[list[str]]
-    diffs: list[list[str]]
-    eqs: list[list[str]]
+    row_lines: list[list[str]]
+    col_lines: list[list[str]]
     solution: list[list[str]]

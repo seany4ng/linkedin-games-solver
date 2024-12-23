@@ -12,6 +12,4 @@ def handle_exception(e: APIException):
 
 
 if __name__ == "__main__":
-    for rule in app.url_map.iter_rules():
-            print(f"Route: {rule.rule}, Methods: {', '.join(rule.methods)}, Endpoint: {rule.endpoint}")
     app.run(host="localhost", port=8000, debug=True)

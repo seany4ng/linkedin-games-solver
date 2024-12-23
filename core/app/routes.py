@@ -5,7 +5,7 @@ from core.app.schemas import TangoGenerationResponse, TangoSolveRequest
 from core.queens.services import solve_queens_board
 from core.app.schemas import QueensSolveRequest
 from core.tango.tango_board import VALUE_TO_STR_TYPE
-from core.tango.tango_generation import generate_random_tango_board
+from core.tango.tango_generation import convert_eqs_diffs_to_str, generate_random_tango_board
 
 tango_solve = Blueprint('tango', __name__)
 queens_solve = Blueprint('queens', __name__)
@@ -51,15 +51,19 @@ def get():
     num_eq_diff = request.args.get("numEqDiff", default=8, type=int)
     (
         generated_board,
-        diffs,
         eqs,
+        diffs,
         solution,
     ) = generate_random_tango_board(num_eqs_or_diff=num_eq_diff)
     solution_str = [[VALUE_TO_STR_TYPE[x] for x in row] for row in solution]
+    row_lines, col_lines = convert_eqs_diffs_to_str(
+        eqs=eqs,
+        diffs=diffs,
+    )
     response = TangoGenerationResponse(
         board=generated_board,
-        diffs=diffs,
-        eqs=eqs,
+        row_lines=row_lines,
+        col_lines=col_lines,
         solution=solution_str,
     )
     return jsonify(asdict(response)), 200

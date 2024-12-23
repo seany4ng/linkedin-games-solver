@@ -1,0 +1,184 @@
+/* Container for everything */
+.generated-tango-app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+/* Button area for generating a puzzle */
+.generate-section {
+    margin-bottom: 20px;
+}
+
+.generate-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.generate-button:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.generate-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.error-msg {
+    margin-top: 10px;
+    color: red;
+    font-weight: bold;
+}
+
+/* Container for the puzzle grid + controls */
+.generated-tango-board-with-lines-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 11x11 puzzle grid for a 6x6 puzzle */
+.generated-puzzle-grid {
+    display: grid;
+    grid-template-rows: repeat(11, 30px);
+    grid-template-columns: repeat(11, 30px);
+    gap: 0;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 25px;
+}
+
+/* Controls row */
+.generated-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.gen-control-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.gen-control-button:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.gen-control-button:active {
+    background-color: #d0d0d0;
+}
+
+.gen-control-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Basic puzzle cell styling */
+.generated-cell,
+.generated-vertical-line,
+.generated-horizontal-line,
+.generated-intersection,
+.generated-filler {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+}
+
+/* Clicking on cells toggles sun/moon/blank */
+.generated-cell {
+    cursor: pointer;
+}
+
+.generated-cell img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+/* Vertical lines have a default grey line in the middle */
+.generated-vertical-line {
+    cursor: pointer;
+}
+
+.generated-vertical-line::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: #ccc;
+}
+
+.generated-vertical-line img {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Horizontal lines have a default grey line in the middle */
+.generated-horizontal-line {
+    cursor: pointer;
+}
+
+.generated-horizontal-line::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    width: 100%;
+    background: #ccc;
+}
+
+.generated-horizontal-line img {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Intersection lines get crossing lines in the middle */
+.generated-intersection::before {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: #ccc;
+    left: 50%;
+}
+
+.generated-intersection::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: #ccc;
+    top: 50%;
+}
+
+/* Filler is just empty space to keep grid alignment */
+.generated-filler {
+    background: #fff;
+}

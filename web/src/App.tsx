@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import TangoBoard from './components/TangoBoard';
-import QueensBoard from './components/QueensBoard';
-import './styles/Nav.css'; 
+import './styles/Nav.css';
+import SolvePage from './pages/SolvePage';
+import PlayPage from './pages/PlayPage';
 
 const App: React.FC = () => {
   return (
@@ -15,26 +15,18 @@ const App: React.FC = () => {
               <Link to="/" className="nav-link">Home</Link>
             </li>
             <li>
-              <Link to="/tango" className="nav-link">Tango</Link>
+              <Link to="/solve" className="nav-link">Solve</Link>
             </li>
             <li>
-              <Link to="/queens" className="nav-link">Queens</Link>
-            </li>
-            <li>
-              <Link to="/pinpoint" className="nav-link">Pinpoint</Link>
-            </li>
-            <li>
-              <Link to="/crossclimb" className="nav-link">Crossclimb</Link>
+              <Link to="/play" className="nav-link">Play</Link>
             </li>
           </ul>
         </nav>
 
         {/* Route Definitions */}
         <Routes>
-          <Route path="/tango" element={<TangoBoard />} />
-          <Route path="/queens" element={<QueensBoard />} />
-          <Route path="/pinpoint" element={<div className="placeholder-page">TBD</div>} />
-          <Route path="/crossclimb" element={<div className="placeholder-page">TBD</div>} />
+          <Route path="/solve/*" element={<SolvePage />} />
+          <Route path="/play/*" element={<PlayPage />} />
           <Route path="*" element={<div className="placeholder-page">Select a game from the navbar!</div>} />
         </Routes>
       </div>

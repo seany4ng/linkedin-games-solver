@@ -202,7 +202,24 @@ def generate_random_tango_board(
 
     return (
         [[VALUE_TO_STR_TYPE[x] for x in row] for row in prev_solution],
-        diffs,
         eqs,
+        diffs,
         generated_board,
     )
+
+
+def convert_eqs_diffs_to_str(
+    eqs: list[EqOrDiff],
+    diffs: list[EqOrDiff],
+) -> tuple[list[list[str], list[list[str]]]]:
+    row_lines = [[" " for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+    col_lines = [[" " for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+    eqs_and_diffs = eqs + diffs
+    for eq_or_diff in eqs_and_diffs:
+        if eq_or_diff.is_row:
+            row_lines[eq_or_diff.row][eq_or_diff.col] = "=" if eq_or_diff.is_eq else "x"
+
+        else:
+            col_lines[eq_or_diff.row][eq_or_diff.col] = "=" if eq_or_diff.is_eq else "x"
+
+    return row_lines, col_lines

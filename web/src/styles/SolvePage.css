@@ -1,0 +1,35 @@
+.solve-page-container {
+    display: flex;
+    height: 100vh;
+}
+
+.left-nav {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.left-nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.left-nav ul li {
+    margin-bottom: 15px;
+}
+
+.solve-nav-link {
+    text-decoration: none;
+    color: #333;
+}
+
+.solve-nav-link:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
