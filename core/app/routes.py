@@ -7,6 +7,9 @@ from core.app.schemas import QueensSolveRequest
 tango_solve = Blueprint('tango/solve', __name__)
 queens_solve = Blueprint('queens/solve', __name__)
 
+
+# BEGIN: Tango routes
+
 @tango_solve.route('/tango/solve', methods=['POST'])
 def post():
     """
@@ -34,6 +37,18 @@ def post():
     return jsonify({
         "solved_board": solved_board_str,
     }), 200
+
+
+@tango_solve.route('/generate', methods=["GET"])
+def get():
+    """
+    Expect: TangoGenerateRequest
+    Response: TangoGenerateResponse
+    """
+    return jsonify({"TODO": "finish this"}), 200
+
+
+# BEGIN: Queens routes
 
 @queens_solve.route('/queens/solve', methods=['POST'])
 def post():

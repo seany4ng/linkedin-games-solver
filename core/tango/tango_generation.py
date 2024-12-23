@@ -1,4 +1,5 @@
 from typing import Any
+from core.app.exceptions import APIException
 from core.tango.tango_board import BoardValueEnum, BOARD_SIZE, EqOrDiff, TangoBoard, VALUE_TO_STR_TYPE
 
 
@@ -97,9 +98,19 @@ def try_generate_random_tango_board() -> list[list[BoardValueEnum]] | None:
 
 def generate_random_tango_board(
     num_eqs_or_diff: int,
-) -> tuple[list[list[str]], list[list[str]], list[list[str]]]:
+) -> tuple[
+    list[list[str]],
+    list[list[str]],
+    list[list[str]],
+    list[list[str]],
+]:
     """
     Generates a random, unsolved tango Board.
+    Returns:
+        board: a blank board
+        diffs: the diffs required
+        eqs: the eqs required
+        solution: the board representing the intended solution
     """
     generated_board = try_generate_random_tango_board()
     while generated_board is None or not is_valid_board(generated_board):
@@ -107,23 +118,38 @@ def generate_random_tango_board(
 
     # Given the generated board, let's generate a solution.
     # Step 1: Randomly pick a bunch of eq and diff.
-    eq: list[Any] = []
-    diff: list[Any] = []
+    eqs: list[Any] = []
+    diffs: list[Any] = []
+    used_rows = set()
+    used_cols = set()
     for i in range(num_eqs_or_diff):
-        is_row = random.random() > 0.5
-        ind = random.randint(0, 29)
-        bigger = ind % 6
-        smaller = ind // 6
-        if is_row:
-            row, col = bigger, smaller
-            next_row, next_col = row, col + 1
+        bad = True
+        # Find a row/col/is_row distinction that doesn't involve
+        # a row/col value that has been used for a line of the same type.
+        while bad:
+            bad = False
+            is_row = random.random() > 0.5
+            ind = random.randint(0, 29)
+            bigger = ind % 6
+            smaller = ind // 6
+            if is_row:
+                row, col = bigger, smaller
+                next_row, next_col = row, col + 1
+                if (row, col) in used_rows:
+                    bad = True
 
-        else:
-            row, col = smaller, bigger
-            next_row, next_col = row + 1, col
+                used_rows.add((row, col))
+
+            else:
+                row, col = smaller, bigger
+                next_row, next_col = row + 1, col
+                if (row, col) in used_cols:
+                    bad = True
+
+                used_cols.add((row, col))
 
         if generated_board[row][col] == generated_board[next_row][next_col]:
-            eq.append(
+            eqs.append(
                 EqOrDiff(
                     is_eq=True,
                     is_row=is_row,
@@ -133,7 +159,7 @@ def generate_random_tango_board(
             )
 
         else:
-            diff.append(
+            diffs.append(
                 EqOrDiff(
                     is_eq=False,
                     is_row=is_row,
@@ -150,8 +176,33 @@ def generate_random_tango_board(
                 filled_squares.add((i, j))
 
     prev_solution = copy.deepcopy(generated_board)
-    while True:
+    found_limit = False
+    while not found_limit:
         new_solution = copy.deepcopy(prev_solution)
-        x, y = random.sample(new_solution)[0]
+        x, y = random.sample(list(filled_squares), k=1)[0]
         filled_squares.remove((x, y))
         new_solution[x][y] = BoardValueEnum.BLANK
+
+        # Using new_solution, let's try solving the board.
+        new_board = TangoBoard(
+            board=[[VALUE_TO_STR_TYPE[x] for x in row] for row in new_solution],
+            diffs=diffs,
+            eqs=eqs,
+        )
+        try:
+            new_board.solve_board()
+
+        except APIException:
+            found_limit = True
+            break
+
+        prev_solution = new_solution
+
+    # Now, we have a blank Tango board and an expected solution. Return it.
+
+    return (
+        [[VALUE_TO_STR_TYPE[x] for x in row] for row in prev_solution],
+        diffs,
+        eqs,
+        generated_board,
+    )
