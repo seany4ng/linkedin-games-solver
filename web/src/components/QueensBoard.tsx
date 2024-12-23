@@ -85,7 +85,7 @@ const QueensBoard: React.FC = () => {
     };
 
     return (
-        <div className="queens-board-container">
+        <div className="queens-board-container no-select">
             {/* Top Controls: Board Size */}
             <div className="top-controls">
                 <label htmlFor="board-size">Board Size:</label>
@@ -100,9 +100,9 @@ const QueensBoard: React.FC = () => {
                 <span>{boardSize} x {boardSize}</span>
             </div>
             
-            <div className="main-content">
+            <div className="main-content no-select">
                 {/* Left Column: Color Selection */}
-                <div className="color-column">
+                <div className="color-column no-select">
                     {COLORS.map(color => (
                         <div 
                             key={color} 
@@ -115,16 +115,16 @@ const QueensBoard: React.FC = () => {
 
                 {/* Board Grid */}
                 <div 
-                    className="board-grid"
+                    className="board-grid no-select"
                     ref={boardRef}
                     onMouseLeave={handleMouseUp} // stop painting when leaving board
                 >
                     {board.map((row, rIdx) => (
-                        <div key={rIdx} className="board-row">
+                        <div key={rIdx} className="board-row no-select">
                             {row.map((cellColor, cIdx) => (
                                 <div
                                     key={cIdx}
-                                    className="board-cell"
+                                    className="board-cell no-select"
                                     style={{ backgroundColor: cellColor || 'white' }}
                                     onMouseDown={() => handleMouseDown(rIdx, cIdx)}
                                     onMouseUp={handleMouseUp}

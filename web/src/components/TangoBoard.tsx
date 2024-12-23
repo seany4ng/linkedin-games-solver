@@ -210,11 +210,11 @@ const TangoBoard: React.FC = () => {
 
     return (
         <div className="tango-app-container">
-            <div className="tango-board-with-lines-container">
-                <div className="puzzle-grid">
+            <div className="tango-board-with-lines-container no-select">
+                <div className="puzzle-grid no-select">
                     {elements}
                 </div>
-                <div className="controls">
+                <div className="controls no-select">
                     <button
                         className={`control-button ${history.board.length === 0 ? 'disabled' : ''}`}
                         onClick={handleUndo}

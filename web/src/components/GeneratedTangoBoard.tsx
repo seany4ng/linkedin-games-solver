@@ -285,12 +285,12 @@ const GeneratedTangoBoard: React.FC = () => {
 
             {/* Only show puzzle if we have data */}
             {data && (
-                <div className="generated-tango-board-with-lines-container">
-                    <div className="generated-puzzle-grid">
+                <div className="generated-tango-board-with-lines-container no-select">
+                    <div className="generated-puzzle-grid no-select">
                         {elements}
                     </div>
 
-                    <div className="generated-controls">
+                    <div className="generated-controls no-select">
                         <button
                             className={`gen-control-button ${history.board.length <= initialHistoryIndex ? 'disabled' : ''
                                 }`}
