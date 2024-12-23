@@ -1,0 +1,48 @@
+{
+    "rewrites": [
+        {
+            "source": "/solve/tango",
+            "destination": "/"
+        },
+        {
+            "source": "/solve/queens",
+            "destination": "/"
+        },
+        {
+            "source": "/solve/pinpoint",
+            "destination": "/"
+        },
+        {
+            "source": "/solve/crossclimb",
+            "destination": "/"
+        },
+        {
+            "source": "/play/tango",
+            "destination": "/"
+        },
+        {
+            "source": "/play/queens",
+            "destination": "/"
+        },
+        {
+            "source": "/play/pinpoint",
+            "destination": "/"
+        },
+        {
+            "source": "/play/crossclimb",
+            "destination": "/"
+        },
+        {
+            "source": "/solve/(.*)",
+            "destination": "/"
+        },
+        {
+            "source": "/play/(.*)",
+            "destination": "/"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
+    ]
+}
