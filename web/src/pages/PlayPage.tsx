@@ -22,7 +22,7 @@ const PlayPage: React.FC = () => {
                     </li>
                 </ul>
             </aside>
-            <main className="main-content">
+            <main className="play-content">
                 <Routes>
                     <Route path="tango" element={<GeneratedTangoBoard />} />
                     <Route path="queens" element={<div className="placeholder-page">Queens Play TBD</div>} />

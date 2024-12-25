@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import TangoBoard from '../components/TangoBoard';
 import QueensBoard from '../components/QueensBoard';
-import '../styles/SolvePage.css';
+import '../styles/LearnPage.css';
 
-const SolvePage: React.FC = () => {
+const LearnPage: React.FC = () => {
     return (
         <div className="solve-page-container">
             <aside className="left-nav">
@@ -23,7 +23,7 @@ const SolvePage: React.FC = () => {
                     </li>
                 </ul>
             </aside>
-            <main className="main-content">
+            <main className="learn-content">
                 <Routes>
                     <Route path="tango" element={<TangoBoard />} />
                     <Route path="queens" element={<QueensBoard />} />
@@ -36,4 +36,4 @@ const SolvePage: React.FC = () => {
     );
 };
 
-export default SolvePage;
+export default LearnPage;

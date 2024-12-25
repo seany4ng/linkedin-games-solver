@@ -100,7 +100,7 @@ const QueensBoard: React.FC = () => {
                 <span>{boardSize} x {boardSize}</span>
             </div>
             
-            <div className="main-content no-select">
+            <div className="queens-content no-select">
                 {/* Left Column: Color Selection */}
                 <div className="color-column no-select">
                     {COLORS.map(color => (
