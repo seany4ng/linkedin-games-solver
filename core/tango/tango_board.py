@@ -161,6 +161,14 @@ class TangoBoard:
                 line[-1] = BoardValueEnum.MOON
             if line[-1] == line[-2] == BoardValueEnum.SUN:
                 line[0] = BoardValueEnum.MOON
+
+            # RULE 6: If one end has moon/sun and one away from the other end is the same symbol,
+            # the unsolved opposite end must have the opposite symbol.
+            # If it had the same symbol, this forces 3 in a row. Therefore, we can deduce the other end.
+            if line[0] == line[4] and line[5] == BoardValueEnum.BLANK:
+                line[5] = TangoBoard.get_opposite_value(line[0])
+            if line[1] == line[5] and line[0] == BoardValueEnum.BLANK:
+                line[0] = TangoBoard.get_opposite_value(line[1])
         
 
     def solve_row_rule(self):
@@ -181,7 +189,7 @@ class TangoBoard:
             x1, y1, x2, y2 = eq.row, eq.col, eq.row + (0 if eq.is_row else 1), eq.col + (1 if eq.is_row else 0)
             if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:
 
-                # RULE 6: If empty eq, eq values must be opposite to edge
+                # RULE 7: If empty eq, eq values must be opposite to edge
                 if eq.is_row:
                     left, right = y1 - 1, y2 + 1
                     if left >= 0 and self.board[x1][left] != BoardValueEnum.BLANK:
@@ -199,7 +207,7 @@ class TangoBoard:
                         self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(self.board[bottom][y1])
                         continue
 
-                # RULE 7: If empty eq and 3 values, eq values must be equal to smaller count
+                # RULE 8: If empty eq and 3 values, eq values must be equal to smaller count
                 row = self.board[x1] if eq.is_row else [row[y1] for row in self.board]
                 sun_count = row.count(BoardValueEnum.SUN)
                 moon_count = row.count(BoardValueEnum.MOON)
@@ -210,7 +218,7 @@ class TangoBoard:
                     self.board[x1][y1] = self.board[x2][y2] = BoardValueEnum.SUN
                     continue
 
-                # RULE 8: If empty eq on one end and opposite end filled, eq must be different
+                # RULE 9: If empty eq on one end and opposite end filled, eq must be different
                 if eq.is_row and y1 == 0 and (grid_val := self.board[x1][-1]) != BoardValueEnum.BLANK:
                     self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
                 if eq.is_row and y2 == BOARD_SIZE - 1 and (grid_val := self.board[x1][0]) != BoardValueEnum.BLANK:
@@ -220,7 +228,7 @@ class TangoBoard:
                 if not eq.is_row and x2 == BOARD_SIZE - 1 and (grid_val := self.board[0][y1]) != BoardValueEnum.BLANK:
                     self.board[x1][y1] = self.board[x2][y2] = TangoBoard.get_opposite_value(grid_val)
 
-            # RULE 9: If empty x and 3 values, remaining blank tile must be equal to smaller count
+            # RULE 10: If empty x and 3 values, remaining blank tile must be equal to smaller count
             for diff in self.diffs:
                 x1, y1, x2, y2 = diff.row, diff.col, diff.row + (0 if diff.is_row else 1), diff.col + (1 if diff.is_row else 0)
                 if self.board[x1][y1] == self.board[x2][y2] == BoardValueEnum.BLANK:

@@ -2,6 +2,62 @@ from core.app.exceptions import APIException, TangoBoardInsufficientException, T
 from core.tango.tango_board import TangoBoard, BOARD_SIZE, INT_TO_VALUE_TYPE, EqOrDiff
 
 
+def test_board_82():
+    """
+    Tango no. 82.
+    Source: https://www.linkedin.com/posts/tango-game_tango-no-82-activity-7278681081107623936-aHEK
+    """
+    # Arrange
+    board = [[" " for i in range(BOARD_SIZE)] for j in range(BOARD_SIZE)]
+    board[1][2] = "O"
+    board[1][3] = "O"
+    board[3][1] = "O"
+    board[3][2] = "X"
+    board[5][0] = "X"
+    board[5][1] = "X"
+
+    # Eqs
+    eqs = []
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=0,
+            col=3,
+        )
+    )
+    eqs.append(
+        EqOrDiff(
+            is_eq=True,
+            is_row=True,
+            row=4,
+            col=1,
+        )
+    )
+
+    # Diffs
+    diffs = []
+    diffs.append(
+        EqOrDiff(
+            is_eq=False,
+            is_row=True,
+            row=2,
+            col=2,
+        )
+    )
+
+    # Act
+    board_class = TangoBoard(
+        board=board,
+        diffs=diffs,
+        eqs=eqs,
+    )
+    board_class.solve_board()
+
+    # Assert
+    assert board_class.is_solved()
+
+
 def test_board_57():
     """
     Tango no. 57.
