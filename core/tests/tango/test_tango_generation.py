@@ -4,12 +4,12 @@ from core.tango.tango_generation import generate_random_tango_board
 
 def test_try_generate_board():
     """
-    Try generating a Tango board 100 times.
+    Try generating a Tango board.
     """
     (
         generated_board,
-        diffs,
         eqs,
+        diffs,
         solution,
     ) = generate_random_tango_board(8)
     new_tango_board = TangoBoard(
