@@ -1,7 +1,8 @@
 from dataclasses import asdict
 from flask import Blueprint, jsonify, request
+from core.queens.queens_generation import generate_random_queens_board
 from core.tango.services import solve_tango_board
-from core.app.schemas import TangoGenerationResponse, TangoSolveRequest
+from core.app.schemas import QueensGenerationResponse, TangoGenerationResponse, TangoSolveRequest
 from core.queens.services import solve_queens_board
 from core.app.schemas import QueensSolveRequest
 from core.tango.tango_board import VALUE_TO_STR_TYPE
@@ -98,3 +99,23 @@ def post():
     return jsonify({
         "solved_board": solved_board,
     }), 200
+
+
+@queens_solve.route('/generate', methods=["GET"])
+def get():
+    """
+    Expect: numRows
+    Response: TangoGenerateResponse
+    """
+    num_rows = request.args.get("numRows", default=8, type=int)
+    (
+        _,
+        generated_board,
+    ) = generate_random_queens_board(
+        n=num_rows,
+    )
+    response = QueensGenerationResponse(
+        board_size=num_rows,
+        board=generated_board,
+    )
+    return jsonify(asdict(response)), 200

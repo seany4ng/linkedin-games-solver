@@ -20,3 +20,9 @@ class TangoGenerationResponse:
     row_lines: list[list[str]]
     col_lines: list[list[str]]
     solution: list[list[str]]
+
+
+@dataclass
+class QueensGenerationResponse:
+    board_size: int
+    board: list[list[int]]
