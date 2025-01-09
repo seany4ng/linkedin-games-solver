@@ -19,7 +19,7 @@ export function useTangoGenerate() {
 
         try {
             const response = await client.get<TangoGenerateResponse>('/tango/generate', {
-                params: { num_eq_diff: numEqDiff },
+                params: { numEqDiff: numEqDiff },
             });
             setData(response.data);
         } catch (err: any) {

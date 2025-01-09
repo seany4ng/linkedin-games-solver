@@ -51,7 +51,8 @@ const GeneratedTangoBoard: React.FC = () => {
     const handleGeneratePuzzle = async () => {
         // Example:  we pass “numEqDiff” as 8, or allow user to choose it.
         // You can refine this to your app’s needs.
-        await generate(8);
+        let numEqDiff = Math.floor(Math.random() * (10 - 4 + 1)) + 4;
+        await generate(numEqDiff);
 
         // After `generate(...)` finishes, our `data` prop will be updated.
         // That triggers a re-render, so we can then set states in an effect or right here.
