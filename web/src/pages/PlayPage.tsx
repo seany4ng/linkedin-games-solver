@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
 import '../styles/PlayPage.css';
+import PlayLandingPage from '../pages/PlayLandingPage';
 import GeneratedTangoBoard from '../components/GeneratedTangoBoard';
 import GeneratedQueensBoard from '../components/GeneratedQueensBoard';
 import TangoLogo from '../assets/tango_logo.svg';
@@ -87,9 +88,7 @@ const PlayPage: React.FC = () => {
                     <Route
                         path="*"
                         element={
-                            <div className="placeholder-page">
-                                Select a game from the left navbar!
-                            </div>
+                            <PlayLandingPage />
                         }
                     />
                 </Routes>
