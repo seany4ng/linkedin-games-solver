@@ -44,9 +44,7 @@ const GeneratedQueensBoard: React.FC = () => {
 
     // Clear everything
     const handleClear = () => {
-        setBoardColors([]);
-        setMarkerBoard([]);
-        setData(null);
+        setMarkerBoard((prev) => prev.map((r) => r.map(() => 'none')));
     };
 
     // Mouse-down on a cell → toggle marker
@@ -115,43 +113,46 @@ const GeneratedQueensBoard: React.FC = () => {
             {loading && <div>Loading…</div>}
             {error && <div style={{ color: 'red' }}>Error: {error.message}</div>}
 
-            {/* Main Board */}
-            <div
-                className="board-grid"
-                onMouseLeave={handleMouseUp} // stop painting if mouse leaves
-            >
-                {boardColors.map((row, rIdx) => (
-                <div key={rIdx} className="board-row">
-                    {row.map((colorVal, cIdx) => {
-                    const backgroundColor = colorMap(colorVal);
-                    const marker = markerBoard[rIdx]?.[cIdx];
+            {boardColors.length > 0 && 
+                <div
+                    className="board-grid"
+                    onMouseLeave={handleMouseUp} // stop painting if mouse leaves
+                >
+                    {boardColors.map((row, rIdx) => (
+                    <div key={rIdx} className="board-row">
+                        {row.map((colorVal, cIdx) => {
+                        const backgroundColor = colorMap(colorVal);
+                        const marker = markerBoard[rIdx]?.[cIdx];
 
-                    return (
-                        <div
-                            key={`${rIdx}-${cIdx}`}
-                            className="board-cell"
-                            style={{ backgroundColor, position: 'relative' }}
-                            onMouseDown={() => handleMouseDownOnCell(rIdx, cIdx)}
-                            onMouseEnter={() => handleMouseEnterCell(rIdx, cIdx)}
-                            onMouseUp={handleMouseUp}
-                        >
-                        {marker === 'x' && (
-                            <img src={XIcon} alt="X" className="marker-icon no-select"/>
-                        )}
-                        {marker === 'queen' && (
-                            <img src={QueenIcon} alt="Q" className="marker-icon no-select" />
-                        )}
-                        </div>
-                    );
-                    })}
+                        return (
+                            <div
+                                key={`${rIdx}-${cIdx}`}
+                                className="board-cell"
+                                style={{ backgroundColor, position: 'relative' }}
+                                onMouseDown={() => handleMouseDownOnCell(rIdx, cIdx)}
+                                onMouseEnter={() => handleMouseEnterCell(rIdx, cIdx)}
+                                onMouseUp={handleMouseUp}
+                            >
+                            {marker === 'x' && (
+                                <img src={XIcon} alt="X" className="marker-icon no-select"/>
+                            )}
+                            {marker === 'queen' && (
+                                <img src={QueenIcon} alt="Q" className="marker-icon no-select" />
+                            )}
+                            </div>
+                        );
+                        })}
+                    </div>
+                    ))}
                 </div>
-                ))}
-            </div>
-
+            }
+            
             {/* Bottom Controls */}
-            <div className="bottom-controls">
-                <button onClick={handleClear}>Clear</button>
-            </div>
+            {boardColors.length > 0 && (
+                <div className="bottom-controls">
+                    <button onClick={handleClear}>Clear</button>
+                </div>
+            )}
         </div>
     );
     };
