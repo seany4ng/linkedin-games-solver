@@ -1,17 +1,45 @@
+/* Overall container for the page */
 .solve-page-container {
     display: flex;
     height: 100vh;
+    /* Fill vertical space */
+    /* Ensures children stretch in height if needed */
+    align-items: stretch;
 }
 
+/* Wrapper around the sidebar + button */
+.nav-container {
+    position: relative;
+    /* 
+    Make this container also stretch to full height, 
+    so the aside is fully visible and not "cut off" 
+  */
+    height: 100%;
+}
+
+/* Default expanded sidebar */
 .left-nav {
+    /* Let the aside fill entire nav-container vertically */
+    height: 100%;
     width: 200px;
     background-color: #f4f4f4;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    overflow: hidden;
+    /* so text doesn't stick out when collapsed */
 }
 
+/* Fully collapse the sidebar to 0 width, 0 padding */
+.left-nav.collapsed {
+    width: 0;
+    padding: 0;
+}
+
+/* Remove default list styles and set spacing */
 .left-nav ul {
     list-style-type: none;
+    margin: 0;
     padding: 0;
 }
 
@@ -28,8 +56,44 @@
     text-decoration: underline;
 }
 
+/* Toggle button styling */
+.toggle-button {
+    position: absolute;
+    /* Place near the top of the sidebar */
+    top: 10px;
+    /* Sit just to the right edge of the aside */
+    left: 100%;
+    transform: translateX(0);
+
+    background-color: #ddd;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-button:hover {
+    background-color: #ccc;
+}
+
+/* Main content area */
 .play-content {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
+}
+
+/* Placeholder page styling */
+.placeholder-page {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.solve-nav-link.active {
+    font-weight: bold;
+    color: #007BFF;
 }

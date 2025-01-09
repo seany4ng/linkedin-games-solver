@@ -1,24 +1,52 @@
+/* Overall container for the page */
 .solve-page-container {
     display: flex;
     height: 100vh;
+    /* Fill vertical space */
+    align-items: stretch;
+    /* So children also stretch to full height */
 }
 
+/* 
+  Wrapper around the sidebar + toggle button.
+  This ensures the sidebar is not cut off vertically,
+  and we can position the toggle button absolutely inside.
+*/
+.nav-container {
+    position: relative;
+    height: 100%;
+}
+
+/* Default expanded sidebar */
 .left-nav {
     width: 200px;
+    height: 100%;
     background-color: #f4f4f4;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    overflow: hidden;
+    /* Hide content when collapsed */
 }
 
+/* Collapsed sidebar -> 0 width, 0 padding */
+.left-nav.collapsed {
+    width: 0;
+    padding: 0;
+}
+
+/* Sidebar UL / LI styling */
 .left-nav ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 .left-nav ul li {
     margin-bottom: 15px;
 }
 
+/* Nav links */
 .solve-nav-link {
     text-decoration: none;
     color: #333;
@@ -28,8 +56,44 @@
     text-decoration: underline;
 }
 
+/* Toggle button: circular, placed near the top edge */
+.toggle-button {
+    position: absolute;
+    top: 10px;
+    /* distance from top */
+    left: 100%;
+    /* right edge of the aside */
+    transform: translateX(0);
+
+    background-color: #ddd;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-button:hover {
+    background-color: #ccc;
+}
+
+/* Main content area */
 .learn-content {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
+}
+
+/* Placeholder page styling */
+.placeholder-page {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.solve-nav-link.active {
+    font-weight: bold;
+    color: #007BFF;
 }
