@@ -146,7 +146,7 @@ const GeneratedQueensBoard: React.FC = () => {
                     ))}
                 </div>
             }
-            
+
             {/* Bottom Controls */}
             {boardColors.length > 0 && (
                 <div className="bottom-controls">

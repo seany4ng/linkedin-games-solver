@@ -3,6 +3,10 @@ import { Routes, Route, NavLink } from 'react-router-dom';
 import '../styles/PlayPage.css';
 import GeneratedTangoBoard from '../components/GeneratedTangoBoard';
 import GeneratedQueensBoard from '../components/GeneratedQueensBoard';
+import TangoLogo from '../assets/tango_logo.svg';
+import QueensLogo from '../assets/queens_logo.svg';
+import PinpointLogo from '../assets/pinpoint_logo.svg';
+import CrossclimbLogo from '../assets/crossclimb_logo.svg';
 
 const PlayPage: React.FC = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -23,7 +27,7 @@ const PlayPage: React.FC = () => {
                                     isActive ? 'solve-nav-link active' : 'solve-nav-link'
                                 }
                             >
-                                Tango
+                                <img src={TangoLogo} alt="Tango" />
                             </NavLink>
                         </li>
                         <li>
@@ -33,7 +37,7 @@ const PlayPage: React.FC = () => {
                                     isActive ? 'solve-nav-link active' : 'solve-nav-link'
                                 }
                             >
-                                Queens
+                                <img src={QueensLogo} alt="Queens" />
                             </NavLink>
                         </li>
                         <li>
@@ -43,7 +47,7 @@ const PlayPage: React.FC = () => {
                                     isActive ? 'solve-nav-link active' : 'solve-nav-link'
                                 }
                             >
-                                Pinpoint
+                                <img src={PinpointLogo} alt="Pinpoint" />
                             </NavLink>
                         </li>
                         <li>
@@ -53,7 +57,7 @@ const PlayPage: React.FC = () => {
                                     isActive ? 'solve-nav-link active' : 'solve-nav-link'
                                 }
                             >
-                                Crossclimb
+                                <img src={CrossclimbLogo} alt="Crossclimb" />
                             </NavLink>
                         </li>
                     </ul>
