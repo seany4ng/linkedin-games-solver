@@ -22,7 +22,6 @@
     width: 100px;
     height: 100%;
     background-color: #f4f4f4;
-    padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
     overflow: hidden;
@@ -43,7 +42,7 @@
 }
 
 .left-nav ul li {
-    margin-bottom: 15px;
+    margin: 25px;
 }
 
 /* Nav links */
