@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
+import LearnLandingPage from '../pages/LearnLandingPage';
 import TangoBoard from '../components/TangoBoard';
 import QueensBoard from '../components/QueensBoard';
 import '../styles/LearnPage.css';
@@ -87,9 +88,7 @@ const LearnPage: React.FC = () => {
                     <Route
                         path="*"
                         element={
-                            <div className="placeholder-page">
-                                Select a game from the left navbar!
-                            </div>
+                            <LearnLandingPage />
                         }
                     />
                 </Routes>
