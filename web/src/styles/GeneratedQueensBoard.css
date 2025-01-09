@@ -1,0 +1,198 @@
+/* UnlimitedQueensBoard.css */
+
+/* Container for the entire unlimited queens page */
+.unlimited-queens-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    font-family: sans-serif;
+}
+
+/* Top controls for board size slider + generate button */
+.top-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.top-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin: 0 5px;
+}
+
+.top-controls label {
+    font-weight: 600;
+}
+
+.top-controls input[type="range"] {
+    -webkit-appearance: none; /* Remove default styling on WebKit */
+    width: 150px;
+    background: transparent;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+/* Slider Track */
+.top-controls input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #ccc;
+    border-radius: 3px;
+}
+.top-controls input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: #ccc;
+    border-radius: 3px;
+}
+
+/* Slider Thumb */
+.top-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    background: #888;
+    border-radius: 50%;
+    margin-top: -5px;
+}
+.top-controls input[type="range"]::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    background: #888;
+    border: none;
+    border-radius: 50%;
+}
+
+/* Displayed board size number */
+.top-controls span {
+    font-weight: 600;
+}
+
+/* Main board container */
+.board-grid {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* One row = set of cells side by side */
+.board-row {
+    display: flex;
+}
+
+/* Each cell: 40px x 40px, 0.5px border */
+.board-cell {
+    width: 40px;
+    height: 40px;
+    border: 0.5px solid #000;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    display: flex;            /* So we can center the marker in the cell */
+    align-items: center;
+    justify-content: center;
+}
+
+.board-cell:hover {
+    border-color: #aaa;
+}
+
+/* Markers: X or Q */
+.marker-x {
+    color: red;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.marker-queen {
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Bottom controls (Clear button, etc.) */
+.bottom-controls {
+    margin-top: 20px;
+}
+
+.bottom-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin: 0 5px;
+}
+
+.bottom-controls button:hover {
+    background-color: #e0e0e0;
+    border-color: #888;
+}
+
+.bottom-controls button:active {
+    background-color: #d0d0d0;
+}
+
+.bottom-controls button:disabled,
+.bottom-controls button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Add this class for the icons to fit within the cell */
+.marker-icon {
+    width: 24px;   /* Adjust width to fit nicely within the tile */
+    height: 24px;  /* Adjust height to fit nicely within the tile */
+    object-fit: contain; /* Ensure the icon scales properly */
+    pointer-events: none; /* Prevent interfering with cell interactions */
+}
+
+/* Prevent text selection on double-click */
+.no-select {
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE10+/Edge */
+    user-select: none;         /* Standard */
+}
+
+/* Simple responsiveness */
+@media (max-width: 600px) {
+    .board-cell {
+        width: 30px;
+        height: 30px;
+    }
+
+    .top-controls input[type="range"] {
+        width: 100px;
+    }
+
+    .bottom-controls button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+/* Disables selection on double click */
+.no-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import '../styles/PlayPage.css';
 import GeneratedTangoBoard from '../components/GeneratedTangoBoard';
+import GeneratedQueensBoard from '../components/GeneratedQueensBoard';
 
 const PlayPage: React.FC = () => {
     return (
@@ -25,7 +26,7 @@ const PlayPage: React.FC = () => {
             <main className="play-content">
                 <Routes>
                     <Route path="tango" element={<GeneratedTangoBoard />} />
-                    <Route path="queens" element={<div className="placeholder-page">Queens Play TBD</div>} />
+                    <Route path="queens" element={<GeneratedQueensBoard/>} />
                     <Route path="pinpoint" element={<div className="placeholder-page">Pinpoint Page Content TBD</div>} />
                     <Route path="crossclimb" element={<div className="placeholder-page">Crossclimb Page Content TBD</div>} />
                     <Route path="*" element={<div className="placeholder-page">Select a game from the left navbar!</div>} />
