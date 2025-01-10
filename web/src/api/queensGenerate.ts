@@ -4,6 +4,7 @@ import client from './client'; // Make sure you have a pre-configured Axios clie
 interface QueensGenerateResponse {
     board_size: number;
     board: string[][];
+    solution: string[][];
 }
 
 export function useQueensGenerate() {

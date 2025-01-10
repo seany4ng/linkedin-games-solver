@@ -105,17 +105,19 @@ def post():
 def get():
     """
     Expect: numRows
-    Response: TangoGenerateResponse
+    Response: QueensGenerateResponse
     """
     num_rows = request.args.get("numRows", default=8, type=int)
     (
         _,
         generated_board,
+        generated_solution,
     ) = generate_random_queens_board(
         n=num_rows,
     )
     response = QueensGenerationResponse(
         board_size=num_rows,
         board=generated_board,
+        solution=generated_solution
     )
     return jsonify(asdict(response)), 200

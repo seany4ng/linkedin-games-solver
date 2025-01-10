@@ -26,3 +26,4 @@ class TangoGenerationResponse:
 class QueensGenerationResponse:
     board_size: int
     board: list[list[int]]
+    solution: list[int]
