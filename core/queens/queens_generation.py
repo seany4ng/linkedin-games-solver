@@ -35,7 +35,7 @@ def solve_n_queens(n: int) -> list[list[int]]:
     backtrack(0)
     return cols
 
-def try_generate_random_queens_board(n: int) -> list[list[int]]:
+def try_generate_random_queens_board(n: int) -> tuple[list[int], list[list[int]]]:
     
     n_queens_board = solve_n_queens(n)
     board = [[0 for _ in range(n)] for _ in range(n)]
@@ -66,11 +66,11 @@ def try_generate_random_queens_board(n: int) -> list[list[int]]:
         if nx is not None and ny is not None:
             non_zero_cells.append((nx, ny))
 
-    return board
+    return n_queens_board, board
 
-def generate_random_queens_board(n: int) -> tuple[int, list[list[int]]]:
+def generate_random_queens_board(n: int) -> tuple[int, list[list[int]], list[int]]:
 
-    generated_board = try_generate_random_queens_board(n)
+    generated_solution, generated_board = try_generate_random_queens_board(n)
 
     # Try solving the board, if it fails, try generating a new board
     # and solving it, repeat until a solution is found.
@@ -85,6 +85,6 @@ def generate_random_queens_board(n: int) -> tuple[int, list[list[int]]]:
             num_generated += 1
             break
         except QueensBoardInsufficientException:
-            generated_board = try_generate_random_queens_board(n)
+            generated_solution, generated_board = try_generate_random_queens_board(n)
     
-    return num_generated, generated_board
+    return num_generated, generated_board, generated_solution

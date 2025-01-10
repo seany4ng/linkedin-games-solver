@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const client = axios.create({
-    baseURL: 'https://seany4ng--linkedin-games-solver-run-app.modal.run',
+    // baseURL: 'https://seany4ng--linkedin-games-solver-run-app.modal.run',
+    baseURL: 'http://localhost:8000',
     headers: {
         'Content-Type': 'application/json',
     },
