@@ -10,8 +10,8 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     env:
-      MODAL_TOKEN_ID: ${{ ak-iUNuYfiJzfxVYT4AZegKro }}
-      MODAL_TOKEN_SECRET: ${{ as-1oghZBA1uhCZAT7NEgXPa2 }}
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
 
     steps:
       - name: Checkout Repository
