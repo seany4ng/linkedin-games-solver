@@ -3,44 +3,26 @@ from core.app.exceptions import APIException
 from core.queens.queens_board import QueensBoard, QueensBoardInsufficientException
 
 import copy, random
+import os
 
-def solve_n_queens(n: int) -> list[list[int]]:
+def solve_n_queens(n: int) -> list[int]:
     """
-    Solve the n-Queens problem via backtracking.
-    Returns a list 'cols' of length n, where cols[row] = column index
-    of the queen in that row.
+    Generates random n_queens solution given n
     """
-    cols = [-1] * n  # cols[i] = column of queen in row i
-
-    def is_safe(row, col):
-        for r in range(row):
-            c = cols[r]
-            if c == col:  # same column
-                return False
-            if abs(r - row) == abs(c - col):  # same diagonal
-                return False
-        return True
-
-    def backtrack(row):
-        if row == n:
-            return True
-        for col in range(n):
-            if is_safe(row, col):
-                cols[row] = col
-                if backtrack(row + 1):
-                    return True
-                cols[row] = -1
-        return False
-
-    backtrack(0)
-    return cols
+    with open("core/queens/n_queens/" + str(n) + "_queens_solutions.txt", "r") as f:
+        lines = f.readlines()
+        random_line = random.choice(lines).strip()
+        return list(map(int, random_line.split()))
 
 def try_generate_random_queens_board(n: int) -> tuple[list[int], list[list[int]]]:
     
     n_queens_board = solve_n_queens(n)
     board = [[0 for _ in range(n)] for _ in range(n)]
+
+    color_locations = list(range(1, n + 1))
+    random.shuffle(color_locations)
     for i, col in enumerate(n_queens_board):
-        board[i][col] = i + 1
+        board[i][col] = color_locations.pop()
 
     rows, cols = len(board), len(board[0])
     directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up

@@ -101,6 +101,8 @@ const GeneratedQueensBoard: React.FC = () => {
             placedQueens.filter((col) => col !== undefined).length === boardSize && // Ensure no undefined values
             placedQueens.every((col, row) => col === data.solution[row]); // Verify positions match the solution
 
+        console.log(placedQueens)
+        console.log(data.solution)
         setSolved(isCorrect);
     };
 
