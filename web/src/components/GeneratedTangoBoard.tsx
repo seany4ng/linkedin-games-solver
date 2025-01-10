@@ -1,6 +1,6 @@
 // src/components/GeneratedTangoBoard.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/GeneratedTangoBoard.css';
 
 import MoonIcon from '../assets/moon.svg';
@@ -29,6 +29,7 @@ const GeneratedTangoBoard: React.FC = () => {
     const [board, setBoard] = useState<string[][]>([]);
     const [verticalLines, setVerticalLines] = useState<string[][]>([]);
     const [horizontalLines, setHorizontalLines] = useState<string[][]>([]);
+    const [isSolved, setIsSolved] = useState<boolean>(false);
 
     // History is stored for undo, but we also track the index of the
     // earliest history snapshot (the “generated” board).
@@ -59,7 +60,7 @@ const GeneratedTangoBoard: React.FC = () => {
     };
 
     // If data has changed, we can reflect that in the board
-    React.useEffect(() => {
+    useEffect(() => {
         if (data) {
             // data.board is the 6x6 puzzle
             setBoard(clone2DArray(data.board));
@@ -87,6 +88,20 @@ const GeneratedTangoBoard: React.FC = () => {
             setInitialHistoryIndex(0);
         }
     }, [data]);
+
+    useEffect(() => {
+        const boardFlat = board.flat();
+        const solFlat = solution?.flat();
+        if (boardFlat.length !== solFlat?.length) {
+            setIsSolved(false);
+            return;
+        }
+        if (boardFlat.every((val: string, ind: number) => val == solFlat[ind])) {
+            setIsSolved(true);
+        } else {
+            setIsSolved(false);
+        }
+    }, [board, solution]);
 
     // ------------------------------------
     // 4. Board interaction
@@ -309,6 +324,11 @@ const GeneratedTangoBoard: React.FC = () => {
                         >
                             Clear
                         </button>
+                        {
+                            isSolved && (
+                                <button className="gen-control-button">Solved!</button>
+                            )
+                        }
                     </div>
                 </div>
             )}
