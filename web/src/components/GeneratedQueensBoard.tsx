@@ -82,19 +82,24 @@ const GeneratedQueensBoard: React.FC = () => {
     const validateSolution = () => {
         if (!data?.solution) return;
 
+        let queensCounter = 0;
+
         // Collect queen positions
         const placedQueens: number[] = [];
         for (let row = 0; row < markerBoard.length; row++) {
             for (let col = 0; col < markerBoard[row].length; col++) {
                 if (markerBoard[row][col] === 'queen') {
+                    queensCounter++;
                     placedQueens[row] = col;
                 }
             }
         }
 
         // Check if solution matches
-        const isCorrect = placedQueens.length === boardSize &&
-            placedQueens.every((col, row) => col === data.solution[row]);
+        const isCorrect = 
+            queensCounter === boardSize && // Check if all rows have a queen
+            placedQueens.filter((col) => col !== undefined).length === boardSize && // Ensure no undefined values
+            placedQueens.every((col, row) => col === data.solution[row]); // Verify positions match the solution
 
         setSolved(isCorrect);
     };
@@ -117,10 +122,10 @@ const GeneratedQueensBoard: React.FC = () => {
                     onChange={handleSliderChange}
                 />
                 <span>{boardSize} x {boardSize}</span>
-                <button onClick={handleGenerateBoard}>Generate New Board</button>
+                {!loading && <button onClick={handleGenerateBoard}>Generate Puzzle</button>}
+                {loading && <button>Generating Puzzle...</button>}
             </div>
 
-            {loading && <div>Loading…</div>}
             {error && <div style={{ color: 'red' }}>Error: {error.message}</div>}
 
             {boardColors.length > 0 && 
