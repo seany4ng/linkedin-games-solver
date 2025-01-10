@@ -324,6 +324,11 @@ const GeneratedTangoBoard: React.FC = () => {
                         >
                             Clear
                         </button>
+                        {
+                            isSolved && (
+                                <button className="gen-control-button">Solved!</button>
+                            )
+                        }
                     </div>
                 </div>
             )}
