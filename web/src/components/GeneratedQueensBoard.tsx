@@ -101,8 +101,6 @@ const GeneratedQueensBoard: React.FC = () => {
             placedQueens.filter((col) => col !== undefined).length === boardSize && // Ensure no undefined values
             placedQueens.every((col, row) => col === data.solution[row]); // Verify positions match the solution
 
-        console.log(placedQueens)
-        console.log(data.solution)
         setSolved(isCorrect);
     };
 
@@ -124,11 +122,14 @@ const GeneratedQueensBoard: React.FC = () => {
                     onChange={handleSliderChange}
                 />
                 <span>{boardSize} x {boardSize}</span>
-                {!loading && <button onClick={handleGenerateBoard}>Generate Puzzle</button>}
-                {loading && <button>Generating Puzzle...</button>}
+                <button
+                    onClick={handleGenerateBoard}
+                    disabled={loading}
+                >
+                    {loading ? "Generating..." : "Generate Puzzle"}
+                </button>
+                {error && <div className="error-msg">Error: {error.message}</div>}
             </div>
-
-            {error && <div style={{ color: 'red' }}>Error: {error.message}</div>}
 
             {boardColors.length > 0 && 
                 <div
