@@ -24,61 +24,63 @@ const GeneratedTangoBoard: React.FC = () => {
     // ------------------------------------
     // 2. Local States
     // ------------------------------------
-    // We keep track of the *current* board, vertical lines, horizontal lines,
-    // plus the “initial” states that came from generation, so we know how far we can undo/clear.
     const [board, setBoard] = useState<string[][]>([]);
     const [verticalLines, setVerticalLines] = useState<string[][]>([]);
     const [horizontalLines, setHorizontalLines] = useState<string[][]>([]);
     const [isSolved, setIsSolved] = useState<boolean>(false);
 
-    // History is stored for undo, but we also track the index of the
-    // earliest history snapshot (the “generated” board).
     const [history, setHistory] = useState<{
         board: string[][][],
         verticalLines: string[][][][],
         horizontalLines: string[][][][]
     }>({ board: [], verticalLines: [], horizontalLines: [] });
 
-    // This index tells us how far back we can undo.
     const [initialHistoryIndex, setInitialHistoryIndex] = useState<number>(0);
-
-    // A separate place to store the solution from the server, if you want
-    // to display or otherwise use it.
     const [solution, setSolution] = useState<string[][] | null>(null);
+
+    // -------------------------------------------------------
+    // NEW: Timer states
+    // -------------------------------------------------------
+    const [time, setTime] = useState<number>(0);
+    const [isRunning, setIsRunning] = useState<boolean>(false);
+
+    // -------------------------------------------------------
+    // NEW: Track which cells are locked (unmodifiable)
+    // -------------------------------------------------------
+    const [lockedCells, setLockedCells] = useState<boolean[][]>([]);
 
     // ------------------------------------
     // 3. Generate puzzle
     // ------------------------------------
     const handleGeneratePuzzle = async () => {
-        // Example:  we pass “numEqDiff” as 8, or allow user to choose it.
-        // You can refine this to your app’s needs.
         let numEqDiff = Math.floor(Math.random() * (10 - 4 + 1)) + 4;
         await generate(numEqDiff);
-
-        // After `generate(...)` finishes, our `data` prop will be updated.
-        // That triggers a re-render, so we can then set states in an effect or right here.
     };
 
-    // If data has changed, we can reflect that in the board
+    // If data has changed, reflect it in the board
     useEffect(() => {
         if (data) {
-            // data.board is the 6x6 puzzle
-            setBoard(clone2DArray(data.board));
+            // 1) set board
+            const newBoard = clone2DArray(data.board);
+            setBoard(newBoard);
 
-            // For eq/diff lines, you’d likely parse data.eqs / data.diffs
-            // exactly how your server returns them. For the sake of example,
-            // we’ll assume they are 2D arrays of “=”, “x”, or “ ”, sized
-            // properly for vertical/horizontal lines.  If your server returns
-            // something else, adjust accordingly:
+            // 2) set lines
             setVerticalLines(clone2DArray(data.row_lines));
             setHorizontalLines(clone2DArray(data.col_lines));
 
-            // The solution might also come back in data.solution
+            // 3) set solution if present
             if (data.solution) {
                 setSolution(clone2DArray(data.solution));
             }
 
-            // Clear history so that the new puzzle is the earliest state
+            // 4) set locked cells based on original puzzle (anything not blank from the server is locked)
+            //    (If you only want O/X locked and ' ' not locked, adjust condition below.)
+            const newLockedCells = newBoard.map(row =>
+                row.map(cell => cell !== ' ') // lock if not blank
+            );
+            setLockedCells(newLockedCells);
+
+            // 5) clear history
             const newHistory = {
                 board: [],
                 verticalLines: [],
@@ -86,9 +88,34 @@ const GeneratedTangoBoard: React.FC = () => {
             };
             setHistory(newHistory);
             setInitialHistoryIndex(0);
+
+            // 6) reset and start timer
+            setTime(0);
+            setIsRunning(true);
+        } else {
+            // If no puzzle loaded, stop timer and reset time
+            setIsRunning(false);
+            setTime(0);
         }
     }, [data]);
 
+    // Timer effect: increments every second if `isRunning` is true
+    useEffect(() => {
+        let intervalId: NodeJS.Timeout | null = null;
+
+        if (isRunning) {
+            intervalId = setInterval(() => {
+                setTime(prevTime => prevTime + 1);
+            }, 1000);
+        }
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [isRunning]);
+
+    // ------------------------------------
+    //  Check if solved
+    // ------------------------------------
     useEffect(() => {
         const boardFlat = board.flat();
         const solFlat = solution?.flat();
@@ -96,8 +123,10 @@ const GeneratedTangoBoard: React.FC = () => {
             setIsSolved(false);
             return;
         }
-        if (boardFlat.every((val: string, ind: number) => val == solFlat[ind])) {
+        if (boardFlat.every((val: string, ind: number) => val === solFlat[ind])) {
             setIsSolved(true);
+            // stop timer if puzzle is solved
+            setIsRunning(false);
         } else {
             setIsSolved(false);
         }
@@ -107,6 +136,9 @@ const GeneratedTangoBoard: React.FC = () => {
     // 4. Board interaction
     // ------------------------------------
     const cycleCell = (r: number, c: number) => {
+        // Don't allow changes if this cell was part of the original puzzle or puzzle is solved
+        if (lockedCells[r]?.[c] || isSolved) return;
+
         setBoard(prev => {
             const copy = clone2DArray(prev);
             const current = copy[r][c];
@@ -117,6 +149,9 @@ const GeneratedTangoBoard: React.FC = () => {
     };
 
     const cycleVerticalLine = (r: number, c: number) => {
+        // If you also want lines to lock after solved, do so here:
+        if (isSolved) return;
+
         setVerticalLines(prev => {
             const copy = clone2DArray(prev);
             const current = copy[r][c];
@@ -127,6 +162,9 @@ const GeneratedTangoBoard: React.FC = () => {
     };
 
     const cycleHorizontalLine = (r: number, c: number) => {
+        // If you also want lines to lock after solved, do so here:
+        if (isSolved) return;
+
         setHorizontalLines(prev => {
             const copy = clone2DArray(prev);
             const current = copy[r][c];
@@ -140,8 +178,6 @@ const GeneratedTangoBoard: React.FC = () => {
     // 5. History management
     // ------------------------------------
     const pushHistory = () => {
-        // Whenever the user changes a cell/line, store a snapshot
-        // This effectively pushes the current board state onto the end of the history.
         setHistory(prev => ({
             board: [...prev.board, board],
             verticalLines: [...prev.verticalLines, verticalLines],
@@ -150,11 +186,9 @@ const GeneratedTangoBoard: React.FC = () => {
     };
 
     const handleUndo = () => {
-        // Don’t let the user undo below the “initialHistoryIndex”
         const { board: bHist, verticalLines: vHist, horizontalLines: hHist } = history;
         const lastIndex = bHist.length - 1;
         if (lastIndex >= initialHistoryIndex) {
-            // Pop last entry from history
             const newBoardHistory = [...bHist];
             const newVerticalHistory = [...vHist];
             const newHorizontalHistory = [...hHist];
@@ -209,12 +243,19 @@ const GeneratedTangoBoard: React.FC = () => {
     // A quick utility to clone a 2D string array
     const clone2DArray = (arr: string[][]) => arr.map(row => [...row]);
 
+    // Helper to format the timer in m:ss
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
     // ------------------------------------
     // 7. Render puzzle using an 11×11 grid
     // ------------------------------------
     const GRID_SIZE = 2 * BOARD_SIZE - 1; // for a 6×6 puzzle, that’s 11
-
     const elements = [];
+
     for (let gridRow = 0; gridRow < GRID_SIZE; gridRow++) {
         for (let gridCol = 0; gridCol < GRID_SIZE; gridCol++) {
             const isCellPosition = (gridRow % 2 === 0) && (gridCol % 2 === 0);
@@ -287,7 +328,6 @@ const GeneratedTangoBoard: React.FC = () => {
     // ------------------------------------
     return (
         <div className="generated-tango-app-container">
-
             <div className="generate-section">
                 <button
                     className="generate-button"
@@ -308,27 +348,30 @@ const GeneratedTangoBoard: React.FC = () => {
 
                     <div className="generated-controls no-select">
                         <button
-                            className={`gen-control-button ${history.board.length <= initialHistoryIndex ? 'disabled' : ''
-                                }`}
+                            className={`gen-control-button ${
+                                history.board.length <= initialHistoryIndex ? 'disabled' : ''
+                            }`}
                             onClick={handleUndo}
-                            disabled={history.board.length <= initialHistoryIndex}
+                            disabled={history.board.length <= initialHistoryIndex || isSolved}
                         >
                             Undo
                         </button>
 
                         <button
-                            className={`gen-control-button ${history.board.length <= initialHistoryIndex ? 'disabled' : ''
-                                }`}
+                            className={`gen-control-button ${
+                                history.board.length <= initialHistoryIndex ? 'disabled' : ''
+                            }`}
                             onClick={handleClear}
-                            disabled={history.board.length <= initialHistoryIndex}
+                            disabled={history.board.length <= initialHistoryIndex || isSolved}
                         >
                             Clear
                         </button>
-                        {
-                            isSolved && (
-                                <button className="gen-control-button">Solved!</button>
-                            )
-                        }
+
+                        <div style={{color:'gray'}}>
+                            {formatTime(time)}
+                        </div>
+
+                        {isSolved && <span style={{ color: 'green', fontWeight: 'bold' }}>Solved!</span>}
                     </div>
                 </div>
             )}

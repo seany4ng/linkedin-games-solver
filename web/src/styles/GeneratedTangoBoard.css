@@ -40,6 +40,7 @@
 
 /* Container for the puzzle grid + controls */
 .generated-tango-board-with-lines-container {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -59,6 +60,7 @@
 
 /* Controls row */
 .generated-controls {
+    font-family: 'Roboto', sans-serif;
     margin-top: 20px;
     display: flex;
     gap: 10px;
