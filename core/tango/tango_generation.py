@@ -65,7 +65,7 @@ def try_generate_random_tango_board() -> list[list[BoardValueEnum]] | None:
         # We have now abided by column rules, as well as row-based rules.
         # For the remaining values, we will fill them in using a random permutation
         # of the number of moons/suns left, permuting until we reach a satisfactory solution.
-        # if the number of iterations to reach a satisfactory solution becomes too high, we will return None.
+        # If the number of iterations to reach a satisfactory solution becomes too high, we will return None.
         moons_left = (BOARD_SIZE // 2) - new_row.count(BoardValueEnum.MOON)
         suns_left = (BOARD_SIZE // 2) - new_row.count(BoardValueEnum.SUN)
         remaining = [BoardValueEnum.MOON] * moons_left + [BoardValueEnum.SUN] * suns_left
@@ -124,8 +124,7 @@ def generate_random_tango_board(
     used_cols = set()
     for i in range(num_eqs_or_diff):
         bad = True
-        # Find a row/col/is_row distinction that doesn't involve
-        # a row/col value that has been used for a line of the same type.
+        # Find a row/col/is_row that hasn't been used (for the same type).
         while bad:
             bad = False
             is_row = random.random() > 0.5
@@ -137,17 +136,15 @@ def generate_random_tango_board(
                 next_row, next_col = row, col + 1
                 if (row, col) in used_rows:
                     bad = True
-
                 used_rows.add((row, col))
-
             else:
                 row, col = smaller, bigger
                 next_row, next_col = row + 1, col
                 if (row, col) in used_cols:
                     bad = True
-
                 used_cols.add((row, col))
 
+        # If they match, it's an eq; otherwise it's a diff.
         if generated_board[row][col] == generated_board[next_row][next_col]:
             eqs.append(
                 EqOrDiff(
@@ -157,7 +154,6 @@ def generate_random_tango_board(
                     col=col,
                 )
             )
-
         else:
             diffs.append(
                 EqOrDiff(
@@ -176,49 +172,66 @@ def generate_random_tango_board(
                 filled_squares.add((i, j))
 
     prev_solution = copy.deepcopy(generated_board)
-    found_limit = False
-    while not found_limit:
-        new_solution = copy.deepcopy(prev_solution)
-        x, y = random.sample(list(filled_squares), k=1)[0]
-        filled_squares.remove((x, y))
-        new_solution[x][y] = BoardValueEnum.BLANK
 
-        # Using new_solution, let's try solving the board.
-        new_board = TangoBoard(
-            board=[[VALUE_TO_STR_TYPE[x] for x in row] for row in new_solution],
-            diffs=diffs,
-            eqs=eqs,
-        )
-        try:
-            new_board.solve_board()
+    # ---------------------------------------------------------------------------------
+    # CHANGED SECTION: Instead of immediately breaking on the first failure,
+    # we revert the tile removal that caused unsolvability and try removing another tile.
+    # Once we've exhausted all squares, if we never remove anything else successfully,
+    # we end the process.
+    # ---------------------------------------------------------------------------------
+    while True:
+        found_tile_to_remove = False
+        tiles_to_consider = list(filled_squares)
+        random.shuffle(tiles_to_consider)
 
-        except APIException:
-            found_limit = True
+        for x, y in tiles_to_consider:
+            new_solution = copy.deepcopy(prev_solution)
+            new_solution[x][y] = BoardValueEnum.BLANK
+
+            # Try solving the board with that tile removed
+            new_board = TangoBoard(
+                board=[[VALUE_TO_STR_TYPE[val] for val in row] for row in new_solution],
+                diffs=diffs,
+                eqs=eqs,
+            )
+
+            try:
+                new_board.solve_board()
+                # If it solves successfully, keep the tile removed
+                filled_squares.remove((x, y))
+                prev_solution = new_solution
+                found_tile_to_remove = True
+                # Break to re-shuffle and see if there's still more we can remove
+                break
+            except APIException:
+                # If it fails, revert and try the next tile
+                pass
+
+        # If we didn't manage to remove any tile in this iteration,
+        # then we are done removing tiles altogether
+        if not found_tile_to_remove:
             break
-
-        prev_solution = new_solution
+    # ---------------------------------------------------------------------------------
 
     # Now, we have a blank Tango board and an expected solution. Return it.
-
     return (
-        [[VALUE_TO_STR_TYPE[x] for x in row] for row in prev_solution],
+        [[VALUE_TO_STR_TYPE[x] for x in row] for row in prev_solution],  # blank board
         eqs,
         diffs,
-        generated_board,
+        generated_board,  # the intended solution
     )
 
 
 def convert_eqs_diffs_to_str(
     eqs: list[EqOrDiff],
     diffs: list[EqOrDiff],
-) -> tuple[list[list[str], list[list[str]]]]:
+) -> tuple[list[list[str]], list[list[str]]]:
     row_lines = [[" " for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
     col_lines = [[" " for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
     eqs_and_diffs = eqs + diffs
     for eq_or_diff in eqs_and_diffs:
         if eq_or_diff.is_row:
             row_lines[eq_or_diff.row][eq_or_diff.col] = "=" if eq_or_diff.is_eq else "x"
-
         else:
             col_lines[eq_or_diff.row][eq_or_diff.col] = "=" if eq_or_diff.is_eq else "x"
 
