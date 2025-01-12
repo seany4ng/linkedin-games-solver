@@ -11,6 +11,8 @@ const GeneratedQueensBoard: React.FC = () => {
     const [boardColors, setBoardColors] = useState<number[][]>([]);
     const [markerBoard, setMarkerBoard] = useState<Marker[][]>([]);
     const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
+    const [timeElapsed, setTimeElapsed] = useState<number>(0);
+    const [timerRunning, setTimerRunning] = useState<boolean>(false);
     const [solved, setSolved] = useState<boolean>(false);
 
     const { generate, data, loading, error, setData } = useQueensGenerate();
@@ -32,13 +34,27 @@ const GeneratedQueensBoard: React.FC = () => {
                 row.map((val) => parseInt(val, 10))
             );
             setBoardColors(newBoardColors);
-
+    
             const emptyMarkers: Marker[][] = newBoardColors.map((row) =>
                 row.map(() => 'none')
             );
             setMarkerBoard(emptyMarkers);
+    
+            setTimeElapsed(0);
+            setTimerRunning(true);
         }
     }, [data]);
+    
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (timerRunning) {
+            timer = setInterval(() => {
+                setTimeElapsed((prev) => prev + 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [timerRunning]);
+    
 
     const handleClear = () => {
         setMarkerBoard((prev) => prev.map((r) => r.map(() => 'none')));
@@ -46,11 +62,12 @@ const GeneratedQueensBoard: React.FC = () => {
     };
 
     const handleMouseDownOnCell = (row: number, col: number) => {
+        if (solved) return;
+    
         setIsMouseDown(true);
-
         setMarkerBoard((prev) => {
             const newMarkers = prev.map((r) => [...r]);
-
+    
             if (newMarkers[row][col] === 'none') {
                 newMarkers[row][col] = 'x';
             } else if (newMarkers[row][col] === 'x') {
@@ -61,10 +78,10 @@ const GeneratedQueensBoard: React.FC = () => {
             return newMarkers;
         });
     };
-
+    
     const handleMouseEnterCell = (row: number, col: number) => {
-        if (!isMouseDown) return;
-
+        if (!isMouseDown || solved) return;
+    
         setMarkerBoard((prev) => {
             const newMarkers = prev.map((r) => [...r]);
             if (newMarkers[row][col] === 'none') {
@@ -72,7 +89,7 @@ const GeneratedQueensBoard: React.FC = () => {
             }
             return newMarkers;
         });
-    };
+    };    
 
     const handleMouseUp = () => {
         setIsMouseDown(false);
@@ -81,10 +98,8 @@ const GeneratedQueensBoard: React.FC = () => {
 
     const validateSolution = () => {
         if (!data?.solution) return;
-
+    
         let queensCounter = 0;
-
-        // Collect queen positions
         const placedQueens: number[] = [];
         for (let row = 0; row < markerBoard.length; row++) {
             for (let col = 0; col < markerBoard[row].length; col++) {
@@ -94,15 +109,17 @@ const GeneratedQueensBoard: React.FC = () => {
                 }
             }
         }
-
-        // Check if solution matches
+    
         const isCorrect = 
-            queensCounter === boardSize && // Check if all rows have a queen
-            placedQueens.filter((col) => col !== undefined).length === boardSize && // Ensure no undefined values
-            placedQueens.every((col, row) => col === data.solution[row]); // Verify positions match the solution
-
-        setSolved(isCorrect);
-    };
+            queensCounter === boardSize &&
+            placedQueens.filter((col) => col !== undefined).length === boardSize &&
+            placedQueens.every((col, row) => col === data.solution[row]);
+    
+        if (isCorrect) {
+            setTimerRunning(false);
+            setSolved(true);
+        }
+    };    
 
     const colorMap = (num: number) => {
         const palette = ['#FE7A60', '#96BEFF', '#B3DFA0', '#E5F387', '#BBA3E2', '#FFC992', '#B9B29E', '#DFDFDF', '#DD9FBA', '#9FD2D5'];
@@ -168,6 +185,9 @@ const GeneratedQueensBoard: React.FC = () => {
             {boardColors.length > 0 && (
                 <div className="bottom-controls">
                     <button onClick={handleClear}>Clear</button>
+                    <span className="timer" style={{color:'gray'}}>
+                        {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
+                    </span>
                     {solved && <span style={{ color: 'green', fontWeight: 'bold' }}>Solved!</span>}
                 </div>
             )}
